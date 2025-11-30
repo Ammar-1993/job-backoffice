@@ -10,13 +10,13 @@
     "license": "MIT",
     "repositories": [
         {
-            "type": "path",
-            "url": "../job-shared",
+            "type": "vcs",
+            "url": "https://github.com/Ammar-1993/job-shared.git",
             "options": {
                 "symlink": true
             }
         }
-    ],  
+    ],
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
