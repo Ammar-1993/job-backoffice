@@ -60,6 +60,20 @@ return [
             'report' => false,
         ],
 
+        'cloud' => [
+            'driver' => 's3',
+            'key' => env('LARAVEL_CLOUD_ACCESS_KEY_ID'),
+            'secret' => env('LARAVEL_CLOUD_SECRET_ACCESS_KEY'),
+            'region' => env('LARAVEL_CLOUD_DEFAULT_REGION'),
+            'bucket' => env('LARAVEL_CLOUD_BUCKET'),
+            'url' => env('LARAVEL_CLOUD_URL'),
+            'endpoint' => env('LARAVEL_CLOUD_ENDPOINT'),
+            'use_path_style_endpoint' => env('LARAVEL_CLOUD_USE_PATH_STYLE_ENDPOINT', false),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
