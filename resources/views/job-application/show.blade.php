@@ -54,8 +54,17 @@
                         class="@if($jobApplication->status->value == 'accepted') text-green-600 @elseif($jobApplication->status->value == 'rejected') text-red-600 @else text-purple-600 @endif">{{ __('app.applications.status_' . $jobApplication->status->value) }}
                     </span></p>
                 <p><strong>{{ __('app.applications.resume_tab') }}:</strong>
+                    @php
+                        /** @var \Illuminate\Filesystem\FilesystemAdapter $cloudDisk */
+                        $cloudDisk = Storage::disk('cloud');
+                    @endphp
+                    
                     @if($jobApplication->resume && $jobApplication->resume->fileUri)
-                        <a class="text-blue-500 hover:text-blue-700 underline" href="{{ $jobApplication->resume->fileUri }}" target="_blank">{{ $jobApplication->resume->fileUri }}</a>
+                        <a class="text-blue-500 hover:text-blue-700 underline" 
+                           href="{{ $cloudDisk->url($jobApplication->resume->fileUri) }}" 
+                           target="_blank">
+                            {{ $jobApplication->resume->filename ?? $jobApplication->resume->fileUri }}
+                        </a>
                     @else
                         <span class="text-sm text-gray-600">{{ __('app.applications.no_resume') }}</span>
                     @endif
