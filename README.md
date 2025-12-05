@@ -1,4 +1,4 @@
-# Job Application Platform ((Job Backoffice))
+# Job Application Platform (Job Backoffice)
 
 <div align="center">
 
