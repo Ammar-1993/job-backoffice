@@ -11,6 +11,9 @@
 
 </div>
 
+
+- [Live Demo](https://job-backoffice-tpr26.ondigitalocean.app/login)
+
 ---
 
 ## 📋 Table of Contents
@@ -218,4 +221,4 @@ Run `npm run build` to generate the manifest file.
 
 ---
 
-<p align="center">Made with ❤️ for the Job Application Platform Team</p>
+<p align="center">Developed by ❤️ Engineer Ammar Al-Najjar</p>
