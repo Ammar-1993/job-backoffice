@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Job Application Platform Dashboard](/root/.gemini/antigravity/brain/6bc70a5e-69d1-4f0a-a01b-289b6a7676b2/dashboard_mockup_1764976812455.png)
+![Job Application Platform Dashboard](./docs/assets/02_dashboard.png)
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
@@ -65,17 +65,36 @@ This platform offers a comprehensive suite of tools tailored for different user 
 
 ---
 
-## 🖼 Project Interfaces
+### 1. Secure Access
+**Admin Login**  
+A secure and clean entry point for administrators and company owners.  
+![Login](./docs/assets/01_login.png)
 
-The interface is designed with a focus on **usability** and **clarity**.
+### 2. Command Center
+**Main Dashboard**  
+The central hub providing a real-time overview of the platform's health. It features statistics on total jobs, applications, and active users, along with quick access to recent activities.  
+![Dashboard](./docs/assets/02_dashboard.png)
 
-> *Note: The screenshot above is a conceptual mockup. The actual interface may vary slightly as the project evolves.*
+### 3. Recruitment Management
+**Job Vacancies & Applications**  
+Powerful tools to manage the core recruitment process. Admins can track all posted jobs and review incoming applications efficiently.  
+<div align="center">
+  <img src="./docs/assets/03_job_vacancies_list.png" width="48%" alt="Job Vacancies">
+  <img src="./docs/assets/04_job_applications_list.png" width="48%" alt="Job Applications">
+</div>
 
-### Main Dashboard
-Provides an at-a-glance view of key metrics:
-- **Summary Cards**: Total Jobs, Active Applications, New Users.
-- **Charts**: Visual representation of application trends.
-- **Recent Activity**: Quick list of the latest actions in the system.
+### 4. Categorization & Structure
+**Job Categories**  
+Manage the various job sectors available on the platform, ensuring organized and searchable content for candidates.  
+![Job Categories](./docs/assets/05_job_categories.png)
+
+### 5. Stakeholder Management
+**Companies & Users**  
+Comprehensive lists to manage the platform's key stakeholders. Admins can verify companies, manage user roles, and ensure the integrity of the ecosystem.  
+<div align="center">
+  <img src="./docs/assets/06_companies_list.png" width="48%" alt="Companies List">
+  <img src="./docs/assets/07_users_list.png" width="48%" alt="Users List">
+</div>
 
 ---
 
