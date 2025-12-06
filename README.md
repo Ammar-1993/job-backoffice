@@ -196,6 +196,7 @@ We chose this stack for its **reliability**, **performance**, and **developer ex
 | **Tailwind CSS** | Utility-first CSS framework for rapid, custom UI design. |
 | **Alpine.js** | Lightweight JavaScript framework for interactive frontend components. |
 | **MySQL / MariaDB** | Reliable relational database management. |
+| **Job Shared** | Custom library used to centralize Models and Enums across the platform. |
 | **Vite** | Next-generation frontend tooling for fast builds. |
 
 ---
