@@ -67,14 +67,12 @@
                                 <tr class="hover:bg-gray-50 transition-colors {{ $user->role == 'admin' ? 'bg-gray-50/50' : '' }}">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10">
-                                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold uppercase">
-                                                    {{ substr($user->name, 0, 1) }}
-                                                </div>
+                                            <div class="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs mr-3 flex-shrink-0">
+                                                {{ substr($user->name, 0, 1) }}
                                             </div>
-                                            <div class="ml-4">
+                                            <div class="ml-0">
                                                 <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $user->email }}</div>
+                                                <div class="text-xs text-gray-500">{{ $user->email }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -96,7 +94,18 @@
                                         @if(request('archived'))
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ __('app.categories.archived') }}</span>
                                         @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ __('app.categories.active') }}</span>
+                                            <form action="{{ route('users.toggle-status', $user->id) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" 
+                                                        class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 {{ $user->is_active ? 'bg-green-500' : 'bg-red-500' }}" 
+                                                        role="switch" 
+                                                        aria-checked="{{ $user->is_active ? 'true' : 'false' }}">
+                                                    <span aria-hidden="true" 
+                                                          class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $user->is_active ? 'translate-x-4' : 'translate-x-0' }}">
+                                                    </span>
+                                                </button>
+                                            </form>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -116,13 +125,12 @@
                                                         {{ __('app.common.edit') }}
                                                     </a>
                                                     @if(auth()->user()->id != $user->id)
-                                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('{{ __('app.users.confirm_archive') }}');">
-                                                            @csrf @method('DELETE')
-                                                            <button type="submit" class="text-red-600 hover:text-red-900 flex items-center ml-2">
+                                                        <x-confirm-popover action="{{ route('users.destroy', $user->id) }}" question="{{ __('app.users.confirm_archive') }}">
+                                                            <button type="button" class="text-red-600 hover:text-red-900 flex items-center ml-2">
                                                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                                                                 {{ __('app.common.archive') }}
                                                             </button>
-                                                        </form>
+                                                        </x-confirm-popover>
                                                     @endif
                                                 @endif
                                             @endif

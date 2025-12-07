@@ -29,19 +29,12 @@
                         <button 
                             @click="sidebarOpen = !sidebarOpen"
                             aria-label="Toggle sidebar"
-                            class="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 border border-gray-200 group flex-shrink-0">
+                            class="md:hidden p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 border border-gray-200 group flex-shrink-0">
                             <!-- Hamburger Icon (transforms to X) -->
-                            <div class="w-5 h-4 flex flex-col justify-between">
-                                <span 
-                                    :class="sidebarOpen ? 'rotate-45 translate-y-1.5' : ''"
-                                    class="block h-0.5 w-full bg-primary-600 rounded-full transform transition-all duration-300"></span>
-                                <span 
-                                    :class="sidebarOpen ? 'opacity-0' : 'opacity-100'"
-                                    class="block h-0.5 w-full bg-primary-600 rounded-full transition-all duration-300"></span>
-                                <span 
-                                    :class="sidebarOpen ? '-rotate-45 -translate-y-1.5' : ''"
-                                    class="block h-0.5 w-full bg-primary-600 rounded-full transform transition-all duration-300"></span>
-                            </div>
+                            <!-- Hamburger Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
                         </button>
                         
                         <!-- Page Title -->

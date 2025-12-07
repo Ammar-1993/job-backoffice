@@ -60,7 +60,12 @@
                             @forelse ($categories as $category)
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        {{ $category->name }}
+                                        <div class="flex items-center">
+                                            <div class="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs mr-3">
+                                                {{ substr($category->name, 0, 1) }}
+                                            </div>
+                                            {{ $category->name }}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end items-center space-x-3">
@@ -77,13 +82,12 @@
                                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                     {{ __('app.common.edit') }}
                                                 </a>
-                                                <form action="{{ route('job-categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('{{ __('app.categories.confirm_archive') }}');">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 flex items-center ml-2">
+                                                <x-confirm-popover action="{{ route('job-categories.destroy', $category->id) }}" question="{{ __('app.categories.confirm_archive') }}">
+                                                    <button type="button" class="text-red-600 hover:text-red-900 flex items-center ml-2">
                                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                                                         {{ __('app.common.archive') }}
                                                     </button>
-                                                </form>
+                                                </x-confirm-popover>
                                             @endif
                                         </div>
                                     </td>

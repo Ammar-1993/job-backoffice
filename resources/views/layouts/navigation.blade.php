@@ -2,16 +2,29 @@
     :class="sidebarOpen ? 'translate-x-0 w-[280px]' : '-translate-x-full md:translate-x-0 md:w-[80px]'"
     class="h-screen bg-white border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex-shrink-0 fixed md:relative z-40 transition-all duration-300 ease-in-out overflow-hidden">
     <!-- Application logo -->
+    <!-- Application logo & Toggle -->
     <div class="flex items-center border-b border-gray-50 py-6 transition-all duration-300"
-         :class="sidebarOpen ? 'px-8 justify-start' : 'px-0 justify-center'">
-        <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 rtl:space-x-reverse">
+         :class="sidebarOpen ? 'px-6 justify-between' : 'px-0 justify-center h-[88px]'">
+        <!-- Logo (Visible only when expanded) -->
+        <a href="{{ route('dashboard') }}" 
+           class="flex items-center space-x-2 rtl:space-x-reverse min-w-0"
+           x-show="sidebarOpen"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0 scale-90"
+           x-transition:enter-end="opacity-100 scale-100">
             <x-application-logo class="h-8 w-8 fill-current text-gray-800 transition-all duration-300" />
-            <span x-show="sidebarOpen" 
-                  x-transition:enter="transition ease-out duration-200"
-                  x-transition:enter-start="opacity-0 scale-90"
-                  x-transition:enter-end="opacity-100 scale-100"
-                  class="text-lg font-semibold text-gray-800 whitespace-nowrap">{{ __('app.nav.hire_me') }}</span>
+            <span class="text-lg font-semibold text-gray-800 whitespace-nowrap">{{ __('app.nav.hire_me') }}</span>
         </a>
+
+        <!-- Desktop Sidebar Toggle -->
+        <button @click="sidebarOpen = !sidebarOpen"
+                class="hidden md:flex p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
+                :class="sidebarOpen ? '' : 'mx-auto'">
+             <!-- Hamburger Icon -->
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
     </div>
 
     <!-- Navigation links - Icons Added -->

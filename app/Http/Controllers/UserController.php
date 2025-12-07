@@ -95,10 +95,32 @@ class UserController extends Controller
     /**
      * Restore the specified resource from storage.
      */
+    /**
+     * Restore the specified resource from storage.
+     */
     public function restore(string $id)
     {
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
         return redirect()->route('users.index', ['archived' => 'true'])->with('success', 'User restored successfully');
+    }
+
+    /**
+     * Toggle the active status of the specified user.
+     */
+    public function toggleStatus(string $id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Prevent deactivating own account
+        if (auth()->id() == $user->id) {
+            return back()->with('error', 'You cannot deactivate your own account.');
+        }
+
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        $status = $user->is_active ? 'activated' : 'deactivated';
+        return back()->with('success', "User has been {$status} successfully.");
     }
 }

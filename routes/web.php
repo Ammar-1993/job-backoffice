@@ -38,6 +38,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Users
     Route::resource('users', UserController::class);
     Route::put('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::patch('users/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
     // Companies
     Route::resource('companies', CompanyController::class);

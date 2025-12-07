@@ -63,16 +63,23 @@
                             @forelse ($jobVacancies as $jobVacancy)
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4">
-                                        <div class="text-sm font-medium text-indigo-600">
-                                            @if(request('archived') != 'true')
-                                                <a href="{{ route('job-vacancies.show', $jobVacancy->id) }}" class="hover:underline">{{ $jobVacancy->title }}</a>
-                                            @else
-                                                <span class="text-gray-900">{{ $jobVacancy->title }}</span>
-                                            @endif
+                                        <div class="flex items-center">
+                                            <div class="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs mr-3 flex-shrink-0">
+                                                {{ substr($jobVacancy->title, 0, 1) }}
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-medium text-indigo-600">
+                                                    @if(request('archived') != 'true')
+                                                        <a href="{{ route('job-vacancies.show', $jobVacancy->id) }}" class="hover:underline">{{ $jobVacancy->title }}</a>
+                                                    @else
+                                                        <span class="text-gray-900">{{ $jobVacancy->title }}</span>
+                                                    @endif
+                                                </div>
+                                                @if(auth()->user()->role == 'admin')
+                                                    <div class="text-xs text-gray-500">{{ $jobVacancy->company?->name ?? __('app.dashboard.company_deleted') }}</div>
+                                                @endif
+                                            </div>
                                         </div>
-                                        @if(auth()->user()->role == 'admin')
-                                            <div class="text-xs text-gray-500">{{ $jobVacancy->company?->name ?? __('app.dashboard.company_deleted') }}</div>
-                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $jobVacancy->location }}</div>
@@ -98,13 +105,12 @@
                                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                     {{ __('app.common.edit') }}
                                                 </a>
-                                                <form action="{{ route('job-vacancies.destroy', $jobVacancy->id) }}" method="POST" onsubmit="return confirm('{{ __('app.jobs.confirm_archive') }}');">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 flex items-center ml-2">
+                                                <x-confirm-popover action="{{ route('job-vacancies.destroy', $jobVacancy->id) }}" question="{{ __('app.jobs.confirm_archive') }}">
+                                                    <button type="button" class="text-red-600 hover:text-red-900 flex items-center ml-2">
                                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                                                         {{ __('app.common.archive') }}
                                                     </button>
-                                                </form>
+                                                </x-confirm-popover>
                                             @endif
                                         </div>
                                     </td>
@@ -176,12 +182,11 @@
                                         <a href="{{ route('job-vacancies.edit', $jobVacancy->id) }}" class="flex-1 text-center px-4 py-2 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors">
                                             {{ __('app.common.edit') }}
                                         </a>
-                                        <form action="{{ route('job-vacancies.destroy', $jobVacancy->id) }}" method="POST" onsubmit="return confirm('{{ __('app.jobs.confirm_archive') }}');" class="flex-1">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="w-full px-4 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors">
+                                        <x-confirm-popover action="{{ route('job-vacancies.destroy', $jobVacancy->id) }}" question="{{ __('app.jobs.confirm_archive') }}">
+                                            <button type="button" class="w-full px-4 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors">
                                                 {{ __('app.common.archive') }}
                                             </button>
-                                        </form>
+                                        </x-confirm-popover>
                                     </div>
                                 @endif
                             </div>
