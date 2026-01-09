@@ -173,18 +173,6 @@ php artisan migrate --seed
 
 ---
 
-## 🔐 Default Login Credentials (Development / Demo)
-
-When you run `php artisan migrate --seed`, the backoffice database seeder creates a default administrator account.
-
-- **Role**: admin
-- **Email**: admin@admin.com
-- **Password**: 12345678
-
-Security note:
-- Do **not** use these default credentials in production.
-- After deploying, create a new admin user and/or reset the admin password immediately.
-
 ### 6. Build Assets
 Compile the frontend assets:
 ```bash
