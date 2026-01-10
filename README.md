@@ -190,7 +190,7 @@ Visit `http://localhost:8000` in your browser.
 
 ## 🛠 Technologies Used
 
-We chose this stack for its **reliability**, **performance**, and **developer experience**.
+We chose this stack **reliability**, **performance**, and **developer experience**.
 
 | Technology | Purpose |
 |------------|---------|
