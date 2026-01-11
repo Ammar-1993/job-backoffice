@@ -243,4 +243,4 @@ Run `npm run build` to generate the manifest file.
 
 ---
 
-<p align="center">Developed by ❤️ Engineer Ammar Al-Najjar</p>
+
