@@ -12,7 +12,7 @@
 </div>
 
 
-- [Live Demo](https://job-backoffice-tpr26.ondigitalocean.app/login)
+- [Live Demo](https://ammar-admin.duckdns.org/login)
 
 ---
 
