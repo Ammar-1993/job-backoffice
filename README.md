@@ -46,7 +46,7 @@ The system is built to provide:
 
 This platform offers a comprehensive suite of tools tailored for different user roles:
 
-### 👑 Admin (Super User)
+### 👑 Admin (Super)
 - **Full System Control**: Manage all users, companies, and content.
 - **Master Data Management**: CRUD operations for Job Categories and global settings.
 - **User Management**: View, edit, ban, or restore system users.
