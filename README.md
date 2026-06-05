@@ -1,4 +1,4 @@
-# Job Vacancies Platform (Job Backoffice)
+# Job Vacancies Platform (Job Backoffice) Backend
 
 <div align="center">
 
