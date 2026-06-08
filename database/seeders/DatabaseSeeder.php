@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'password' => Hash::make('12345678'),
             'role' => 'admin',
+            'is_active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -45,7 +46,8 @@ class DatabaseSeeder extends Seeder
             ], [
                 'name' => $company['name'],
                 'password' => Hash::make('12345678'),
-                    'role' => 'company_owner',
+                'role' => 'company_owner',
+                'is_active' => true,
                 'email_verified_at' => now(),
             ]);
 
@@ -105,6 +107,7 @@ class DatabaseSeeder extends Seeder
                 'name' => fake()->name(),
                 'password' => Hash::make('12345678'),
                 'role' => 'job_seeker',
+                'is_active' => true,
                 'email_verified_at' => now(),
             ]);
 
