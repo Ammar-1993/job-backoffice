@@ -223,6 +223,10 @@ return [
         'user_role' => 'User Role',
         'change_password' => 'Change User Password',
         'update_password_btn' => 'Update User Password',
+        'cannot_deactivate_self' => 'You cannot deactivate your own account',
+        'your_account' => 'Your account',
+        'click_to_activate' => 'Click to activate this user',
+        'click_to_deactivate' => 'Click to deactivate this user',
     ],
     'empty_states' => [
         'jobs' => [

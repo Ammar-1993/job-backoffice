@@ -93,6 +93,14 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if(request('archived'))
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ __('app.categories.archived') }}</span>
+                                        @elseif(auth()->id() == $user->id)
+                                            {{-- Own account: show status badge without toggle --}}
+                                            <div class="flex items-center gap-2" title="{{ __('app.users.cannot_deactivate_self') }}">
+                                                <span class="relative inline-flex h-5 w-9 flex-shrink-0 rounded-full border-2 border-transparent {{ $user->is_active ? 'bg-green-500' : 'bg-red-500' }} opacity-50 cursor-not-allowed">
+                                                    <span aria-hidden="true" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 {{ $user->is_active ? 'translate-x-4' : 'translate-x-0' }}"></span>
+                                                </span>
+                                                <span class="text-xs text-gray-400">{{ __('app.users.your_account') }}</span>
+                                            </div>
                                         @else
                                             <form action="{{ route('users.toggle-status', $user->id) }}" method="POST" class="inline-block">
                                                 @csrf
@@ -100,7 +108,8 @@
                                                 <button type="submit" 
                                                         class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 {{ $user->is_active ? 'bg-green-500' : 'bg-red-500' }}" 
                                                         role="switch" 
-                                                        aria-checked="{{ $user->is_active ? 'true' : 'false' }}">
+                                                        aria-checked="{{ $user->is_active ? 'true' : 'false' }}"
+                                                        title="{{ $user->is_active ? __('app.users.click_to_deactivate') : __('app.users.click_to_activate') }}">
                                                     <span aria-hidden="true" 
                                                           class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $user->is_active ? 'translate-x-4' : 'translate-x-0' }}">
                                                     </span>
@@ -119,19 +128,18 @@
                                                     </button>
                                                 </form>
                                             @else
-                                                @if($user->role != 'admin' || auth()->user()->id == $user->id)
-                                                    <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center">
-                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                        {{ __('app.common.edit') }}
-                                                    </a>
-                                                    @if(auth()->user()->id != $user->id)
-                                                        <x-confirm-popover action="{{ route('users.destroy', $user->id) }}" question="{{ __('app.users.confirm_archive') }}">
-                                                            <button type="button" class="text-red-600 hover:text-red-900 flex items-center ml-2">
-                                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                                                                {{ __('app.common.archive') }}
-                                                            </button>
-                                                        </x-confirm-popover>
-                                                    @endif
+                                                {{-- Admin can edit any user's password --}}
+                                                <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                    {{ __('app.common.edit') }}
+                                                </a>
+                                                @if(auth()->user()->id != $user->id)
+                                                    <x-confirm-popover action="{{ route('users.destroy', $user->id) }}" question="{{ __('app.users.confirm_archive') }}">
+                                                        <button type="button" class="text-red-600 hover:text-red-900 flex items-center ml-2">
+                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                                                            {{ __('app.common.archive') }}
+                                                        </button>
+                                                    </x-confirm-popover>
                                                 @endif
                                             @endif
                                         </div>
