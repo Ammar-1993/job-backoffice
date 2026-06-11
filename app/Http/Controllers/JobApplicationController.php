@@ -82,7 +82,7 @@ class JobApplicationController extends Controller
     {
         $jobApplication = JobApplication::findOrFail($id);
         $jobApplication->update([
-            'status' => \App\Enums\JobStatus::from($request->input('status')),
+            'status' => \App\Enums\ApplicationStatus::from($request->input('status')),
         ]);
 
         if($request->query('redirectToList') == 'false'){
