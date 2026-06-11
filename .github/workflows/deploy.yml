@@ -23,7 +23,7 @@ jobs:
             
             echo "⚙️ Rebuilding Backoffice Docker Container..."
             cd /opt/job-platform
-            docker compose up -d --build job_admin_web
+            docker compose up -d --build job-admin
             
             echo "🧹 Clearing Backoffice Cache..."
             docker exec job_admin_web php artisan optimize:clear
