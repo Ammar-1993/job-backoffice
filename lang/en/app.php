@@ -47,6 +47,13 @@ return [
         'views' => 'Views',
         'applications' => 'Applications',
         'conversion_rate' => 'Conversion Rate',
+        'filter_by' => 'Filter by:',
+        'today' => 'Today',
+        'this_week' => 'This Week',
+        'this_month' => 'This Month',
+        'this_year' => 'This Year',
+        'applications_over_time' => 'Applications Over Time',
+        'application_statuses' => 'Application Statuses',
     ],
 
 
