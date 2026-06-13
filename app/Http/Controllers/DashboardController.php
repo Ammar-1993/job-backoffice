@@ -7,51 +7,90 @@ use App\Models\User;
 use App\Models\JobVacancy;
 use App\Models\JobApplication;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $range = $request->get('range', 'all_time');
+
         if(auth()->user()->role == 'admin'){
-            $analytics = $this->adminDashboard();
+            $analytics = $this->adminDashboard($range);
         } else {
-            $analytics = $this->companyOwnerDashboard();
+            $analytics = $this->companyOwnerDashboard($range);
         }
 
-        return view('dashboard.index', compact(['analytics']));
+        return view('dashboard.index', compact(['analytics', 'range']));
     }
 
-    private function adminDashboard()
+    private function getDateLimit($range)
     {
-        // Last 30 days active users (job_seeker role)
-        $activeUsers = Cache::remember('admin_active_users', 600, function () {
-            return User::where('last_login_at', '>=', now()->subDays(30))
-                ->where('role', 'job_seeker')->count();
+        return match ($range) {
+            'today' => now()->startOfDay(),
+            'this_week' => now()->startOfWeek(),
+            'this_month' => now()->startOfMonth(),
+            'this_year' => now()->startOfYear(),
+            default => null, // all_time
+        };
+    }
+
+    private function getRangeLabel($range)
+    {
+        return match ($range) {
+            'today' => __('app.dashboard.today') ?? 'Today',
+            'this_week' => __('app.dashboard.this_week') ?? 'This Week',
+            'this_month' => __('app.dashboard.this_month') ?? 'This Month',
+            'this_year' => __('app.dashboard.this_year') ?? 'This Year',
+            default => __('app.dashboard.all_time') ?? 'All Time',
+        };
+    }
+
+    private function adminDashboard($range)
+    {
+        $dateLimit = $this->getDateLimit($range);
+        $rangeLabel = $this->getRangeLabel($range);
+
+        // Active users (job_seeker role)
+        $activeUsers = Cache::remember("admin_active_users_{$range}", 600, function () use ($dateLimit) {
+            $query = User::where('role', 'job_seeker');
+            if ($dateLimit) $query->where('last_login_at', '>=', $dateLimit);
+            else $query->where('last_login_at', '>=', now()->subDays(30)); // fallback to last 30 days for all_time
+            return $query->count();
         });
 
-        // Total jobs (not deleted)
-        $totalJobs = Cache::remember('admin_total_jobs', 600, function () {
-            return JobVacancy::whereNull('deleted_at')->count();
+        // Total jobs
+        $totalJobs = Cache::remember("admin_total_jobs_{$range}", 600, function () use ($dateLimit) {
+            $query = JobVacancy::whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return $query->count();
         });
 
-        // Total applications (not deleted)
-        $totalApplications = Cache::remember('admin_total_applications', 600, function () {
-            return JobApplication::whereNull('deleted_at')->count();
+        // Total applications
+        $totalApplications = Cache::remember("admin_total_applications_{$range}", 600, function () use ($dateLimit) {
+            $query = JobApplication::whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return $query->count();
         });
 
         // Most applied jobs
-        $mostAppliedJobs = Cache::remember('admin_most_applied_jobs', 600, function () {
-            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])->withCount('jobApplications as totalCount')
+        $mostAppliedJobs = Cache::remember("admin_most_applied_jobs_{$range}", 600, function () use ($dateLimit) {
+            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])
+                ->withCount(['jobApplications as totalCount' => function($q) use ($dateLimit) {
+                    if ($dateLimit) $q->where('created_at', '>=', $dateLimit);
+                }])
                 ->whereNull('deleted_at')
                 ->limit(5)
                 ->orderByDesc('totalCount')
                 ->get();
         });
 
-
         // Conversion rates
-        $conversionRates = Cache::remember('admin_conversion_rates', 600, function () {
-            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])->withCount('jobApplications as totalCount')
+        $conversionRates = Cache::remember("admin_conversion_rates_{$range}", 600, function () use ($dateLimit) {
+            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])
+                ->withCount(['jobApplications as totalCount' => function($q) use ($dateLimit) {
+                    if ($dateLimit) $q->where('created_at', '>=', $dateLimit);
+                }])
                 ->having('totalCount', '>', 0)
                 ->limit(5)
                 ->orderByDesc('totalCount')
@@ -62,95 +101,108 @@ class DashboardController extends Controller
                     } else {
                         $job->conversionRate = 0;
                     }
-                    
-                    
                     return $job;
                 });
         });
 
-        // Chart 1: Applications Over Time (Last 7 Days)
-        $applicationsOverTime = Cache::remember('admin_applications_over_time', 600, function () {
-            return JobApplication::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                ->where('created_at', '>=', now()->subDays(6)->startOfDay())
-                ->whereNull('deleted_at')
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get();
+        // Chart 1: Applications Over Time (Line Chart)
+        $applicationsOverTime = Cache::remember("admin_applications_over_time_{$range}", 600, function () use ($dateLimit) {
+            $query = JobApplication::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->whereNull('deleted_at');
+            if ($dateLimit) {
+                $query->where('created_at', '>=', $dateLimit);
+            } else {
+                $query->where('created_at', '>=', now()->subDays(6)->startOfDay());
+            }
+            return $query->groupBy('date')->orderBy('date')->get();
         });
 
         // Chart 2: Application Status Distribution
-        $applicationStatuses = Cache::remember('admin_application_statuses', 600, function () {
-            return JobApplication::selectRaw('status, COUNT(*) as count')
-                ->whereNull('deleted_at')
-                ->groupBy('status')
-                ->get();
+        $applicationStatuses = Cache::remember("admin_application_statuses_{$range}", 600, function () use ($dateLimit) {
+            $query = JobApplication::selectRaw('status, COUNT(*) as count')
+                ->whereNull('deleted_at');
+            if ($dateLimit) {
+                $query->where('created_at', '>=', $dateLimit);
+            }
+            return $query->groupBy('status')->get();
         });
 
-        $analytics = [
+        return [
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
             'mostAppliedJobs' => $mostAppliedJobs,
             'conversionRates' => $conversionRates,
             'applicationsOverTime' => $applicationsOverTime,
-            'applicationStatuses' => $applicationStatuses
+            'applicationStatuses' => $applicationStatuses,
+            'rangeLabel' => $rangeLabel
         ];
-
-        return $analytics;
     }
 
-    private function companyOwnerDashboard()
+    private function companyOwnerDashboard($range)
     {
-
         $company = auth()->user()->company;
+        $dateLimit = $this->getDateLimit($range);
+        $rangeLabel = $this->getRangeLabel($range);
 
-        // If the authenticated user has no company relation, return empty/zeroed analytics
         if (! $company) {
-            $analytics = [
+            return [
                 'activeUsers' => 0,
                 'totalJobs' => 0,
                 'totalApplications' => 0,
                 'mostAppliedJobs' => collect(),
                 'conversionRates' => collect(),
                 'applicationsOverTime' => collect(),
-                'applicationStatuses' => collect()
+                'applicationStatuses' => collect(),
+                'rangeLabel' => $rangeLabel
             ];
-
-            return $analytics;
         }
 
-        // filter active users by applying to jobs of the company
-        $activeUsers = Cache::remember('company_' . $company->id . '_active_users', 600, function () use ($company) {
-            return User::where('last_login_at', '>=', now()->subDays(30))
-                ->where('role', 'job_seeker')
-                ->whereHas('jobApplications', function($query) use ($company) {
-                    $query->whereIn('jobVacancyId', $company->jobVacancies->pluck('id'));
-                })
-                ->count();
+        // Active users (job_seeker role)
+        $activeUsers = Cache::remember("company_{$company->id}_active_users_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = User::where('role', 'job_seeker')
+                ->whereHas('jobApplications', function($q) use ($company) {
+                    $q->whereIn('jobVacancyId', $company->jobVacancies->pluck('id'));
+                });
+            if ($dateLimit) $query->where('last_login_at', '>=', $dateLimit);
+            else $query->where('last_login_at', '>=', now()->subDays(30));
+            return $query->count();
         });
 
-        // total jobs of the company
-        $totalJobs = Cache::remember('company_' . $company->id . '_total_jobs', 600, function () use ($company) {
-            return $company->jobVacancies->count();
+        // Total jobs
+        $totalJobs = Cache::remember("company_{$company->id}_total_jobs_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobVacancy::whereIn('id', $company->jobVacancies->pluck('id'))
+                ->whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return $query->count();
         });
 
-        // total applications of the company
-        $totalApplications = Cache::remember('company_' . $company->id . '_total_applications', 600, function () use ($company) {
-            return JobApplication::whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))->count();
+        // Total applications
+        $totalApplications = Cache::remember("company_{$company->id}_total_applications_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobApplication::whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
+                ->whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return $query->count();
         });
         
-        // most applied jobs of the company
-        $mostAppliedJobs = Cache::remember('company_' . $company->id . '_most_applied_jobs', 600, function () use ($company) {
-            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])->withCount('jobApplications as totalCount')
+        // Most applied jobs
+        $mostAppliedJobs = Cache::remember("company_{$company->id}_most_applied_jobs_{$range}", 600, function () use ($company, $dateLimit) {
+            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])
+                ->withCount(['jobApplications as totalCount' => function($q) use ($dateLimit) {
+                    if ($dateLimit) $q->where('created_at', '>=', $dateLimit);
+                }])
                 ->whereIn('id', $company->jobVacancies->pluck('id'))
                 ->limit(5)
                 ->orderByDesc('totalCount')
                 ->get();
         });
 
-        // conversion rates of the company
-        $conversionRates = Cache::remember('company_' . $company->id . '_conversion_rates', 600, function () use ($company) {
-            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])->withCount('jobApplications as totalCount')
+        // Conversion rates
+        $conversionRates = Cache::remember("company_{$company->id}_conversion_rates_{$range}", 600, function () use ($company, $dateLimit) {
+            return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])
+                ->withCount(['jobApplications as totalCount' => function($q) use ($dateLimit) {
+                    if ($dateLimit) $q->where('created_at', '>=', $dateLimit);
+                }])
                 ->whereIn('id', $company->jobVacancies->pluck('id'))
                 ->having('totalCount', '>', 0)
                 ->limit(5)
@@ -165,38 +217,40 @@ class DashboardController extends Controller
                     return $job;
                 });
         });
-    
 
-        // Chart 1: Applications Over Time (Last 7 Days)
-        $applicationsOverTime = Cache::remember('company_' . $company->id . '_applications_over_time', 600, function () use ($company) {
-            return JobApplication::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        // Chart 1: Applications Over Time
+        $applicationsOverTime = Cache::remember("company_{$company->id}_applications_over_time_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobApplication::selectRaw('DATE(created_at) as date, COUNT(*) as count')
                 ->whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
-                ->where('created_at', '>=', now()->subDays(6)->startOfDay())
-                ->whereNull('deleted_at')
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get();
+                ->whereNull('deleted_at');
+            if ($dateLimit) {
+                $query->where('created_at', '>=', $dateLimit);
+            } else {
+                $query->where('created_at', '>=', now()->subDays(6)->startOfDay());
+            }
+            return $query->groupBy('date')->orderBy('date')->get();
         });
 
         // Chart 2: Application Status Distribution
-        $applicationStatuses = Cache::remember('company_' . $company->id . '_application_statuses', 600, function () use ($company) {
-            return JobApplication::selectRaw('status, COUNT(*) as count')
+        $applicationStatuses = Cache::remember("company_{$company->id}_application_statuses_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobApplication::selectRaw('status, COUNT(*) as count')
                 ->whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
-                ->whereNull('deleted_at')
-                ->groupBy('status')
-                ->get();
+                ->whereNull('deleted_at');
+            if ($dateLimit) {
+                $query->where('created_at', '>=', $dateLimit);
+            }
+            return $query->groupBy('status')->get();
         });
 
-        $analytics = [
+        return [
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
             'mostAppliedJobs' => $mostAppliedJobs,
             'conversionRates' => $conversionRates,
             'applicationsOverTime' => $applicationsOverTime,
-            'applicationStatuses' => $applicationStatuses
+            'applicationStatuses' => $applicationStatuses,
+            'rangeLabel' => $rangeLabel
         ];
-
-        return $analytics;
     }
 }

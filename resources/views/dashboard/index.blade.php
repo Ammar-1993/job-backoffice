@@ -1,8 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('app.dashboard.title') }}
-        </h2>
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('app.dashboard.title') }}
+            </h2>
+            <form method="GET" action="{{ route('dashboard') }}" class="flex items-center space-x-2 rtl:space-x-reverse">
+                <label for="range" class="text-sm font-medium text-gray-700">{{ __('app.dashboard.filter_by') ?? 'Filter:' }}</label>
+                <select name="range" id="range" onchange="this.form.submit()" class="border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-md shadow-sm text-sm">
+                    <option value="today" {{ $range == 'today' ? 'selected' : '' }}>{{ __('app.dashboard.today') ?? 'Today' }}</option>
+                    <option value="this_week" {{ $range == 'this_week' ? 'selected' : '' }}>{{ __('app.dashboard.this_week') ?? 'This Week' }}</option>
+                    <option value="this_month" {{ $range == 'this_month' ? 'selected' : '' }}>{{ __('app.dashboard.this_month') ?? 'This Month' }}</option>
+                    <option value="this_year" {{ $range == 'this_year' ? 'selected' : '' }}>{{ __('app.dashboard.this_year') ?? 'This Year' }}</option>
+                    <option value="all_time" {{ $range == 'all_time' ? 'selected' : '' }}>{{ __('app.dashboard.all_time') ?? 'All Time' }}</option>
+                </select>
+            </form>
+        </div>
     </x-slot>
 
     <div class="py-8">
@@ -13,7 +25,7 @@
             <x-metric-card 
                 title="{{ __('app.dashboard.active_users') }}" 
                 :value="$analytics['activeUsers']" 
-                subtitle="{{ __('app.dashboard.last_30_days') }}" 
+                subtitle="{{ $analytics['rangeLabel'] }}" 
                 color="primary-600"
                 icon="Users" 
                 href="{{ route('users.index') }}" />
@@ -22,7 +34,7 @@
             <x-metric-card 
                 title="{{ __('app.dashboard.total_jobs') }}" 
                 :value="$analytics['totalJobs']" 
-                subtitle="{{ __('app.dashboard.all_time') }}" 
+                subtitle="{{ $analytics['rangeLabel'] }}" 
                 color="secondary-600"
                 icon="Briefcase" 
                 href="{{ route('job-vacancies.index') }}" />
@@ -31,7 +43,7 @@
             <x-metric-card 
                 title="{{ __('app.dashboard.total_applications') }}" 
                 :value="$analytics['totalApplications']" 
-                subtitle="{{ __('app.dashboard.all_time') }}" 
+                subtitle="{{ $analytics['rangeLabel'] }}" 
                 color="primary-700"
                 icon="FileText" 
                 href="{{ route('job-applications.index') }}" />
@@ -114,13 +126,15 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <!-- Line Chart: Applications Over Time -->
             <div class="p-8 bg-white overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] rounded-xl border border-gray-50">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">{{ __('app.dashboard.applications_over_time') ?? 'Applications Over Time (Last 7 Days)' }}</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-1">{{ __('app.dashboard.applications_over_time') ?? 'Applications Over Time' }}</h3>
+                <p class="text-sm text-gray-500 mb-4">{{ $analytics['rangeLabel'] }}</p>
                 <div id="applicationsChart"></div>
             </div>
 
             <!-- Donut Chart: Application Statuses -->
             <div class="p-8 bg-white overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] rounded-xl border border-gray-50">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">{{ __('app.dashboard.application_statuses') ?? 'Application Statuses' }}</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-1">{{ __('app.dashboard.application_statuses') ?? 'Application Statuses' }}</h3>
+                <p class="text-sm text-gray-500 mb-4">{{ $analytics['rangeLabel'] }}</p>
                 <div id="statusesChart"></div>
             </div>
         </div>
