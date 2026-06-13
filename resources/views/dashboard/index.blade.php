@@ -150,7 +150,25 @@
                                 <td class="py-4 whitespace-nowrap text-sm text-gray-600">{{ $conversionRate->viewCount }}</td>
                                 <td class="py-4 whitespace-nowrap text-sm text-gray-600">{{ $conversionRate->totalCount }}</td>
                                 <td class="py-4 whitespace-nowrap text-sm font-medium">
-                                    <x-status-badge :value="$conversionRate->conversionRate" />
+                                    @php
+                                        $v = (float) $conversionRate->conversionRate;
+                                        if ($v >= 50) {
+                                            $barColor = 'bg-green-500';
+                                            $textColor = 'text-green-700';
+                                        } elseif ($v >= 20) {
+                                            $barColor = 'bg-yellow-500';
+                                            $textColor = 'text-yellow-700';
+                                        } else {
+                                            $barColor = 'bg-red-500';
+                                            $textColor = 'text-red-700';
+                                        }
+                                    @endphp
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-12 text-right {{ $textColor }}">{{ $conversionRate->conversionRate }}%</span>
+                                        <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full {{ $barColor }} transition-all duration-500" style="width: {{ $conversionRate->conversionRate }}%"></div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
