@@ -221,7 +221,9 @@
 
             // Application Statuses Chart (Donut Chart)
             const statusData = @json($analytics['applicationStatuses']);
-            const labels = statusData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1));
+            const labels = statusData.map(item => {
+                return item.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            });
             const series = statusData.map(item => item.count);
             
             // Assign colors based on status
