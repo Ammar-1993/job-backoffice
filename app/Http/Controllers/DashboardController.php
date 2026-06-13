@@ -58,7 +58,7 @@ class DashboardController extends Controller
                 ->get()
                 ->map(function ($job) {
                     if($job->viewCount > 0) {
-                        $job->conversionRate = round( $job->totalCount / $job->viewCount * 100, 2);
+                        $job->conversionRate = min(100, round( $job->totalCount / $job->viewCount * 100, 2));
                     } else {
                         $job->conversionRate = 0;
                     }
@@ -136,7 +136,7 @@ class DashboardController extends Controller
                 ->get()
                 ->map(function ($job) {
                     if($job->viewCount > 0) {
-                        $job->conversionRate = round( $job->totalCount / $job->viewCount * 100, 2);
+                        $job->conversionRate = min(100, round( $job->totalCount / $job->viewCount * 100, 2));
                     } else {
                         $job->conversionRate = 0;
                     }
