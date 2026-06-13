@@ -54,6 +54,11 @@ return [
         'this_year' => 'This Year',
         'applications_over_time' => 'Applications Over Time',
         'application_statuses' => 'Application Statuses',
+        'total_companies' => 'Total Companies',
+        'total_views' => 'Total Job Views',
+        'active_jobs' => 'Active Jobs',
+        'closed_jobs' => 'Closed Jobs',
+        'avg_ai_score' => 'Average AI Match',
     ],
 
 

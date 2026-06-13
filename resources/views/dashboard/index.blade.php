@@ -19,8 +19,8 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-6 flex flex-col gap-6">
-        <!-- Overview Cards - Icons Added -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {{-- Metric Card 1: Active Users --}}
             <x-metric-card 
                 title="{{ __('app.dashboard.active_users') }}" 
@@ -30,22 +30,59 @@
                 icon="Users" 
                 href="{{ route('users.index') }}" />
             
-            {{-- Metric Card 2: Total Jobs --}}
+            {{-- Metric Card 2: Total Companies / Total Views --}}
+            @if(auth()->user()->role == 'admin')
+                <x-metric-card 
+                    title="{{ __('app.dashboard.total_companies') ?? 'Total Companies' }}" 
+                    :value="$analytics['totalCompanies']" 
+                    subtitle="{{ $analytics['rangeLabel'] }}" 
+                    color="indigo-600"
+                    icon="Building" 
+                    href="{{ route('companies.index') }}" />
+            @else
+                <x-metric-card 
+                    title="{{ __('app.dashboard.total_views') ?? 'Total Job Views' }}" 
+                    :value="$analytics['totalCompanies']" 
+                    subtitle="{{ $analytics['rangeLabel'] }}" 
+                    color="indigo-600"
+                    icon="Eye" 
+                    href="{{ route('job-vacancies.index') }}" />
+            @endif
+            
+            {{-- Metric Card 3: Active Jobs --}}
             <x-metric-card 
-                title="{{ __('app.dashboard.total_jobs') }}" 
+                title="{{ __('app.dashboard.active_jobs') ?? 'Active Jobs' }}" 
                 :value="$analytics['totalJobs']" 
                 subtitle="{{ $analytics['rangeLabel'] }}" 
                 color="secondary-600"
                 icon="Briefcase" 
                 href="{{ route('job-vacancies.index') }}" />
+                
+            {{-- Metric Card 4: Closed Jobs --}}
+            <x-metric-card 
+                title="{{ __('app.dashboard.closed_jobs') ?? 'Closed Jobs' }}" 
+                :value="$analytics['closedJobs']" 
+                subtitle="{{ $analytics['rangeLabel'] }}" 
+                color="gray-600"
+                icon="Archive" 
+                href="{{ route('job-vacancies.index') }}" />
             
-            {{-- Metric Card 3: Total Applications --}}
+            {{-- Metric Card 5: Total Applications --}}
             <x-metric-card 
                 title="{{ __('app.dashboard.total_applications') }}" 
                 :value="$analytics['totalApplications']" 
                 subtitle="{{ $analytics['rangeLabel'] }}" 
                 color="primary-700"
                 icon="FileText" 
+                href="{{ route('job-applications.index') }}" />
+                
+            {{-- Metric Card 6: Average AI Match Score --}}
+            <x-metric-card 
+                title="{{ __('app.dashboard.avg_ai_score') ?? 'Avg AI Match Score' }}" 
+                :value="$analytics['avgAiScore'] . '%'" 
+                subtitle="{{ $analytics['rangeLabel'] }}" 
+                color="green-600"
+                icon="Target" 
                 href="{{ route('job-applications.index') }}" />
         </div>
 

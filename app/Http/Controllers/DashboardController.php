@@ -73,6 +73,27 @@ class DashboardController extends Controller
             return $query->count();
         });
 
+        // Total Companies
+        $totalCompanies = Cache::remember("admin_total_companies_{$range}", 600, function () use ($dateLimit) {
+            $query = \App\Models\Company::whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return $query->count();
+        });
+
+        // Average AI Match Score
+        $avgAiScore = Cache::remember("admin_avg_ai_score_{$range}", 600, function () use ($dateLimit) {
+            $query = JobApplication::whereNotNull('aiGeneratedScore')->whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return round((float) $query->avg('aiGeneratedScore'), 1);
+        });
+
+        // Closed Jobs
+        $closedJobs = Cache::remember("admin_closed_jobs_{$range}", 600, function () use ($dateLimit) {
+            $query = JobVacancy::onlyTrashed();
+            if ($dateLimit) $query->where('deleted_at', '>=', $dateLimit);
+            return $query->count();
+        });
+
         // Most applied jobs
         $mostAppliedJobs = Cache::remember("admin_most_applied_jobs_{$range}", 600, function () use ($dateLimit) {
             return JobVacancy::with(['company' => function($q) { $q->withTrashed(); }])
@@ -131,6 +152,9 @@ class DashboardController extends Controller
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
+            'totalCompanies' => $totalCompanies,
+            'avgAiScore' => $avgAiScore,
+            'closedJobs' => $closedJobs,
             'mostAppliedJobs' => $mostAppliedJobs,
             'conversionRates' => $conversionRates,
             'applicationsOverTime' => $applicationsOverTime,
@@ -150,6 +174,9 @@ class DashboardController extends Controller
                 'activeUsers' => 0,
                 'totalJobs' => 0,
                 'totalApplications' => 0,
+                'totalCompanies' => 0,
+                'avgAiScore' => 0,
+                'closedJobs' => 0,
                 'mostAppliedJobs' => collect(),
                 'conversionRates' => collect(),
                 'applicationsOverTime' => collect(),
@@ -182,6 +209,29 @@ class DashboardController extends Controller
             $query = JobApplication::whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
                 ->whereNull('deleted_at');
             if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return $query->count();
+        });
+        
+        // Total Views
+        $totalCompanies = Cache::remember("company_{$company->id}_total_views_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobVacancy::whereIn('id', $company->jobVacancies->pluck('id'))->whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return (int) $query->sum('viewCount');
+        });
+
+        // Average AI Match Score
+        $avgAiScore = Cache::remember("company_{$company->id}_avg_ai_score_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobApplication::whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
+                                   ->whereNotNull('aiGeneratedScore')
+                                   ->whereNull('deleted_at');
+            if ($dateLimit) $query->where('created_at', '>=', $dateLimit);
+            return round((float) $query->avg('aiGeneratedScore'), 1);
+        });
+
+        // Closed Jobs
+        $closedJobs = Cache::remember("company_{$company->id}_closed_jobs_{$range}", 600, function () use ($company, $dateLimit) {
+            $query = JobVacancy::onlyTrashed()->where('companyId', $company->id);
+            if ($dateLimit) $query->where('deleted_at', '>=', $dateLimit);
             return $query->count();
         });
         
@@ -246,6 +296,9 @@ class DashboardController extends Controller
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
+            'totalCompanies' => $totalCompanies,
+            'avgAiScore' => $avgAiScore,
+            'closedJobs' => $closedJobs,
             'mostAppliedJobs' => $mostAppliedJobs,
             'conversionRates' => $conversionRates,
             'applicationsOverTime' => $applicationsOverTime,
