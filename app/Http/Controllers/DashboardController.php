@@ -68,13 +68,33 @@ class DashboardController extends Controller
                 });
         });
 
-            $analytics = [
-                'activeUsers' => $activeUsers,
-                'totalJobs' => $totalJobs,
-                'totalApplications' => $totalApplications,
-                'mostAppliedJobs' => $mostAppliedJobs,
-                'conversionRates' => $conversionRates
-            ];
+        // Chart 1: Applications Over Time (Last 7 Days)
+        $applicationsOverTime = Cache::remember('admin_applications_over_time', 600, function () {
+            return JobApplication::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->where('created_at', '>=', now()->subDays(6)->startOfDay())
+                ->whereNull('deleted_at')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        });
+
+        // Chart 2: Application Status Distribution
+        $applicationStatuses = Cache::remember('admin_application_statuses', 600, function () {
+            return JobApplication::selectRaw('status, COUNT(*) as count')
+                ->whereNull('deleted_at')
+                ->groupBy('status')
+                ->get();
+        });
+
+        $analytics = [
+            'activeUsers' => $activeUsers,
+            'totalJobs' => $totalJobs,
+            'totalApplications' => $totalApplications,
+            'mostAppliedJobs' => $mostAppliedJobs,
+            'conversionRates' => $conversionRates,
+            'applicationsOverTime' => $applicationsOverTime,
+            'applicationStatuses' => $applicationStatuses
+        ];
 
         return $analytics;
     }
@@ -92,6 +112,8 @@ class DashboardController extends Controller
                 'totalApplications' => 0,
                 'mostAppliedJobs' => collect(),
                 'conversionRates' => collect(),
+                'applicationsOverTime' => collect(),
+                'applicationStatuses' => collect()
             ];
 
             return $analytics;
@@ -145,12 +167,34 @@ class DashboardController extends Controller
         });
     
 
+        // Chart 1: Applications Over Time (Last 7 Days)
+        $applicationsOverTime = Cache::remember('company_' . $company->id . '_applications_over_time', 600, function () use ($company) {
+            return JobApplication::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
+                ->where('created_at', '>=', now()->subDays(6)->startOfDay())
+                ->whereNull('deleted_at')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        });
+
+        // Chart 2: Application Status Distribution
+        $applicationStatuses = Cache::remember('company_' . $company->id . '_application_statuses', 600, function () use ($company) {
+            return JobApplication::selectRaw('status, COUNT(*) as count')
+                ->whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
+                ->whereNull('deleted_at')
+                ->groupBy('status')
+                ->get();
+        });
+
         $analytics = [
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
             'mostAppliedJobs' => $mostAppliedJobs,
-            'conversionRates' => $conversionRates
+            'conversionRates' => $conversionRates,
+            'applicationsOverTime' => $applicationsOverTime,
+            'applicationStatuses' => $applicationStatuses
         ];
 
         return $analytics;

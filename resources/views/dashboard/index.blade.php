@@ -109,5 +109,85 @@
                 </table>
             </div>
         </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <!-- Line Chart: Applications Over Time -->
+            <div class="p-8 bg-white overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] rounded-xl border border-gray-50">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">{{ __('app.dashboard.applications_over_time') ?? 'Applications Over Time (Last 7 Days)' }}</h3>
+                <div id="applicationsChart"></div>
+            </div>
+
+            <!-- Donut Chart: Application Statuses -->
+            <div class="p-8 bg-white overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] rounded-xl border border-gray-50">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">{{ __('app.dashboard.application_statuses') ?? 'Application Statuses' }}</h3>
+                <div id="statusesChart"></div>
+            </div>
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Applications Over Time Chart (Line Chart)
+            const timeData = @json($analytics['applicationsOverTime']);
+            const dates = timeData.map(item => item.date);
+            const counts = timeData.map(item => item.count);
+
+            const lineOptions = {
+                chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'inherit' },
+                series: [{ name: 'Applications', data: counts }],
+                xaxis: { categories: dates, type: 'category' },
+                colors: ['#4f46e5'],
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 90, 100] } },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 3 }
+            };
+            
+            if(counts.length > 0) {
+                new ApexCharts(document.querySelector("#applicationsChart"), lineOptions).render();
+            } else {
+                document.querySelector("#applicationsChart").innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
+            }
+
+            // Application Statuses Chart (Donut Chart)
+            const statusData = @json($analytics['applicationStatuses']);
+            const labels = statusData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1));
+            const series = statusData.map(item => item.count);
+            
+            // Assign colors based on status
+            const colors = statusData.map(item => {
+                if(item.status === 'accepted') return '#10b981';
+                if(item.status === 'rejected') return '#ef4444';
+                return '#6b7280'; // pending
+            });
+
+            const donutOptions = {
+                chart: { type: 'donut', height: 350, fontFamily: 'inherit' },
+                series: series,
+                labels: labels,
+                colors: colors,
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%',
+                            labels: {
+                                show: true,
+                                name: { show: true },
+                                value: { show: true }
+                            }
+                        }
+                    }
+                },
+                dataLabels: { enabled: false },
+                legend: { position: 'bottom' }
+            };
+            
+            if(series.length > 0) {
+                new ApexCharts(document.querySelector("#statusesChart"), donutOptions).render();
+            } else {
+                document.querySelector("#statusesChart").innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
+            }
+        });
+    </script>
 </x-app-layout>
