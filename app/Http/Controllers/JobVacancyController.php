@@ -9,6 +9,8 @@ use App\Models\JobCategory;
 use App\Http\Requests\JobVacancyCreateRequest;
 use App\Http\Requests\JobVacancyUpdateRequest;
 use App\Enums\JobType;
+use OpenAI\Laravel\Facades\OpenAI;
+use Illuminate\Support\Facades\Log;
 
 class JobVacancyController extends Controller
 {
@@ -82,6 +84,23 @@ class JobVacancyController extends Controller
     public function store(JobVacancyCreateRequest $request)
     {
         $validated = $request->validated();
+        
+        try {
+            $textToEmbed = json_encode([
+                'title' => $validated['title'] ?? '',
+                'description' => $validated['description'] ?? '',
+                'location' => $validated['location'] ?? '',
+                'type' => $validated['type'] ?? '',
+            ]);
+            $response = OpenAI::embeddings()->create([
+                'model' => 'text-embedding-3-small',
+                'input' => $textToEmbed,
+            ]);
+            $validated['vector_embedding'] = json_encode($response->embeddings[0]->embedding);
+        } catch (\Exception $e) {
+            Log::error('Error generating embedding for JobVacancy: ' . $e->getMessage());
+        }
+
         JobVacancy::create($validated);
         return redirect()->route('job-vacancies.index')->with('success', 'Job vacancy created successfully');
     }
@@ -114,6 +133,23 @@ class JobVacancyController extends Controller
     {
         $validated = $request->validated();
         $jobVacancy = JobVacancy::findOrFail($id);
+        
+        try {
+            $textToEmbed = json_encode([
+                'title' => $validated['title'] ?? $jobVacancy->title,
+                'description' => $validated['description'] ?? $jobVacancy->description,
+                'location' => $validated['location'] ?? $jobVacancy->location,
+                'type' => $validated['type'] ?? $jobVacancy->type,
+            ]);
+            $response = OpenAI::embeddings()->create([
+                'model' => 'text-embedding-3-small',
+                'input' => $textToEmbed,
+            ]);
+            $validated['vector_embedding'] = json_encode($response->embeddings[0]->embedding);
+        } catch (\Exception $e) {
+            Log::error('Error generating embedding for JobVacancy: ' . $e->getMessage());
+        }
+
         $jobVacancy->update($validated);
 
         if($request->query('redirectToList') == 'false'){
