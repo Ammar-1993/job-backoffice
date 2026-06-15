@@ -115,9 +115,23 @@
                         <tbody>
                             <tr>
                                 <td class="py-2 px-4">{{ $jobApplication->resume->summary }}</td>
-                                <td class="py-2 px-4">{{ $jobApplication->resume->skills }}</td>
-                                <td class="py-2 px-4">{{ $jobApplication->resume->experience }}</td>
-                                <td class="py-2 px-4">{{ $jobApplication->resume->education }}</td>
+                                <td class="py-2 px-4">
+                                    @if(is_array($jobApplication->resume->skills))
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($jobApplication->resume->skills as $skill)
+                                                <span class="inline-block bg-gray-200 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">{{ is_string($skill) ? $skill : json_encode($skill) }}</span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        {{ $jobApplication->resume->skills }}
+                                    @endif
+                                </td>
+                                <td class="py-2 px-4">
+                                    <pre class="text-xs whitespace-pre-wrap">{{ is_array($jobApplication->resume->experience) ? json_encode($jobApplication->resume->experience, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : $jobApplication->resume->experience }}</pre>
+                                </td>
+                                <td class="py-2 px-4">
+                                    <pre class="text-xs whitespace-pre-wrap">{{ is_array($jobApplication->resume->education) ? json_encode($jobApplication->resume->education, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : $jobApplication->resume->education }}</pre>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
