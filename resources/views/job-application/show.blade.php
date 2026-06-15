@@ -114,7 +114,9 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="py-2 px-4">{{ $jobApplication->resume->summary }}</td>
+                                <td class="py-2 px-4">
+                                    <pre class="text-xs whitespace-pre-wrap">{{ is_array($jobApplication->resume->summary) ? json_encode($jobApplication->resume->summary, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : $jobApplication->resume->summary }}</pre>
+                                </td>
                                 <td class="py-2 px-4">
                                     @if(is_array($jobApplication->resume->skills))
                                         <div class="flex flex-wrap gap-1">
