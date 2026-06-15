@@ -11,122 +11,131 @@
                 @csrf
 
                 <!-- Company Details -->
-                <div class="mb-4 p-6 bg-gray-50 border border-gray-100 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-bold">{{ __('app.companies.details') }}</h3>
-                    <p class="text-sm mb-2">{{ __('app.companies.enter_details') }}</p>
-
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">{{ __('app.companies.form_name') }}</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}"
-                            class="{{ $errors->has('name') ? 'outline-red-500 outline outline-1' : '' }} mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('name')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                <div class="mb-8 p-8 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center mb-6 border-b border-gray-100 pb-4">
+                        <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg mr-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">{{ __('app.companies.details') }}</h3>
+                            <p class="text-sm text-gray-500">{{ __('app.companies.enter_details') }}</p>
+                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="address" class="block text-sm font-medium text-gray-700">{{ __('app.companies.form_address') }}</label>
-                        <input type="text" name="address" id="address" value="{{ old('address') }}"
-                            class="{{ $errors->has('address') ? 'outline-red-500 outline outline-1' : '' }} mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('address')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <div class="space-y-5">
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_name') }}</label>
+                            <input type="text" name="name" id="name" value="{{ old('name') }}"
+                                class="{{ $errors->has('name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                            @error('name')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div class="mb-4">
-                        <label for="industry" class="block text-sm font-medium text-gray-700">{{ __('app.companies.form_industry') }}</label>
-                        <select name="industry" id="industry"
-                            class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            @foreach ($industries as $industry)
-                                <option value="{{ $industry }}">{{ $industry }}</option>
-                            @endforeach
-                        </select>
-                        @error('industry')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                        <div>
+                            <label for="address" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_address') }}</label>
+                            <input type="text" name="address" id="address" value="{{ old('address') }}"
+                                class="{{ $errors->has('address') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                            @error('address')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div class="mb-4">
-                        <label for="website" class="block text-sm font-medium text-gray-700">{{ __('app.companies.form_website') }}</label>
-                        <input type="text" name="website" id="website" value="{{ old('website') }}"
-                            class="{{ $errors->has('website') ? 'outline-red-500 outline outline-1' : '' }} mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('website')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
+                        <div>
+                            <label for="industry" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_industry') }}</label>
+                            <select name="industry" id="industry"
+                                class="block w-full rounded-xl shadow-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                                @foreach ($industries as $industry)
+                                    <option value="{{ $industry }}">{{ $industry }}</option>
+                                @endforeach
+                            </select>
+                            @error('industry')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                <!-- Company Owner -->
-
-                <div class="mb-4 p-6 bg-gray-50 border border-gray-100 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-bold">{{ __('app.companies.owner_section') }}</h3>
-                    <p class="text-sm mb-4">{{ __('app.companies.enter_owner_details') }}</p>
-
-                    <div class="mb-4">
-                        <label for="owner_name" class="block text-sm font-medium text-gray-700">{{ __('app.companies.owner_name') }}</label>
-                        <input type="text" name="owner_name" id="owner_name" value="{{ old('owner_name') }}"
-                            class="{{ $errors->has('owner_name') ? 'outline-red-500 outline outline-1' : '' }} mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('owner_name')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="owner_email" class="block text-sm font-medium text-gray-700">{{ __('app.companies.owner_email') }}</label>
-                        <input type="email" name="owner_email" id="owner_email" value="{{ old('owner_email') }}"
-                            class="{{ $errors->has('owner_email') ? 'outline-red-500 outline outline-1' : '' }} mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('owner_email')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Owner Password -->
-
-                    <div class="mb-4">
-                        <label for="owner_password" class="block text-sm font-medium text-gray-700">{{ __('app.companies.owner_password') }}</label>
-                        <div class="relative" x-data="{ showPassword: false }">
-                            <x-text-input id="owner_password" class="block mt-1 w-full"
-                                x-bind:type="showPassword ? 'text' : 'password'" name="owner_password" required
-                                autocomplete="current-password" />
-
-                            <button type="button" class="absolute inset-y-0 right-2 flex items-center text-gray-500"
-                                @click="showPassword = !showPassword">
-
-                                <!-- Eye Icon Open -->
-                                <svg x-show="showPassword" width="800px" height="800px" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
-                                    <path
-                                        d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z"
-                                        stroke="#000000" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z"
-                                        stroke="#000000" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-
-                                <!-- Eye Icon Closed -->
-                                <svg x-show="!showPassword" width="800px" height="800px" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
-                                    <path
-                                        d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5"
-                                        stroke="#000000" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </button>
+                        <div>
+                            <label for="website" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_website') }}</label>
+                            <input type="text" name="website" id="website" value="{{ old('website') }}"
+                                class="{{ $errors->has('website') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                            @error('website')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
+                <!-- Company Owner -->
+                <div class="mb-8 p-8 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center mb-6 border-b border-gray-100 pb-4">
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg mr-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">{{ __('app.companies.owner_section') }}</h3>
+                            <p class="text-sm text-gray-500">{{ __('app.companies.enter_owner_details') }}</p>
+                        </div>
+                    </div>
 
+                    <div class="space-y-5">
+                        <div>
+                            <label for="owner_name" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.owner_name') }}</label>
+                            <input type="text" name="owner_name" id="owner_name" value="{{ old('owner_name') }}"
+                                class="{{ $errors->has('owner_name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                            @error('owner_name')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                <div class="flex justify-end space-x-4">
+                        <div>
+                            <label for="owner_email" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.owner_email') }}</label>
+                            <input type="email" name="owner_email" id="owner_email" value="{{ old('owner_email') }}"
+                                class="{{ $errors->has('owner_email') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                            @error('owner_email')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Owner Password -->
+                        <div>
+                            <label for="owner_password" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.owner_password') }}</label>
+                            <div class="relative" x-data="{ showPassword: false }">
+                                <x-text-input id="owner_password" class="{{ $errors->has('owner_password') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white pr-10"
+                                    x-bind:type="showPassword ? 'text' : 'password'" name="owner_password" required
+                                    autocomplete="current-password" />
+
+                                <button type="button" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-indigo-600 transition-colors"
+                                    @click="showPassword = !showPassword">
+
+                                    <!-- Eye Icon Open -->
+                                    <svg x-show="showPassword" width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                        <path d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+
+                                    <!-- Eye Icon Closed -->
+                                    <svg x-show="!showPassword" width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                        <path d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </button>
+                            </div>
+                            @error('owner_password')
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 items-center">
                     <a href="{{ route('companies.index') }}"
-                        class="px-4 py-2 rounded-md text-gray-500 hover:text-gray-700">
+                        class="px-5 py-2.5 rounded-xl font-semibold text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all">
                         {{ __('app.common.cancel') }}
                     </a>
                     <button type="submit"
-                        class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 border border-transparent rounded-xl font-bold text-white shadow-md hover:shadow-lg hover:from-indigo-500 hover:to-indigo-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 active:scale-95">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         {{ __('app.companies.add_btn') }}
                     </button>
                 </div>
