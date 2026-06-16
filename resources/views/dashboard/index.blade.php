@@ -223,8 +223,13 @@
         </div>
         <!-- Inline Script for Charts (Moved inside dashboard-content for AJAX re-evaluation) -->
         <script>
-            // Generate unique IDs for charts to avoid conflicts during AJAX re-renders
-            (function() {
+            // Render charts function that waits for ApexCharts to be loaded
+            function renderDashboardCharts() {
+                if (typeof ApexCharts === 'undefined') {
+                    setTimeout(renderDashboardCharts, 50);
+                    return;
+                }
+
                 const appChartEl = document.querySelector("#applicationsChart");
                 const statChartEl = document.querySelector("#statusesChart");
                 
@@ -303,7 +308,10 @@
                         statChartEl.innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
                     }
                 }
-            })();
+            }
+
+            // Execute immediately (it will wait if ApexCharts is not ready)
+            renderDashboardCharts();
         </script>
         </div>
     </div>
