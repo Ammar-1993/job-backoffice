@@ -15,11 +15,13 @@
                 <!-- Tabs -->
                 <div class="flex space-x-1 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
                     <a href="{{ route('job-vacancies.index') }}" 
-                       class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 {{ !request('archived') ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50' }}">
+                       class="flex-1 sm:flex-none justify-center px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex items-center {{ !request('archived') ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50' }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                         {{ __('app.jobs.active_jobs') }}
                     </a>
                     <a href="{{ route('job-vacancies.index', ['archived' => 'true']) }}" 
-                       class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 {{ request('archived') == 'true' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50' }}">
+                       class="flex-1 sm:flex-none justify-center px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex items-center {{ request('archived') == 'true' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50' }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         {{ __('app.jobs.archived_jobs') }}
                     </a>
                 </div>
@@ -35,7 +37,7 @@
                         </span>
                         <input type="text" name="search" value="{{ request('search') }}" 
                                class="pl-10 block w-full rounded-xl border-gray-200 bg-gray-50 hover:bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2.5 transition-colors" 
-                               placeholder="{{ __('app.jobs.search_placeholder') }}...">
+                               placeholder="{{ __('app.jobs.search_placeholder') }}">
                     </form>
 
                     <a href="{{ route('job-vacancies.create') }}" 
@@ -118,13 +120,14 @@
                                             @if(request('archived') == 'true')
                                                 <form action="{{ route('job-vacancies.restore', $jobVacancy->id) }}" method="POST">
                                                     @csrf @method('PUT')
-                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-100 font-semibold shadow-sm">
-                                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                                        {{ __('app.common.restore') }}
+                                                    <button type="submit" 
+                                                            class="inline-flex items-center justify-center w-8 h-8 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-100 shadow-sm" 
+                                                            title="{{ __('app.common.restore') }}">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                                     </button>
                                                 </form>
                                             @else
-                                                <a href="{{ route('job-vacancies.edit', $jobVacancy->id) }}" class="inline-flex items-center justify-center w-8 h-8 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors border border-amber-100" title="{{ __('app.common.edit') }}">
+                                                <a href="{{ route('job-vacancies.edit', $jobVacancy->id) }}" class="inline-flex items-center justify-center w-8 h-8 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-100" title="{{ __('app.common.edit') }}">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 </a>
                                                 <x-confirm-popover action="{{ route('job-vacancies.destroy', $jobVacancy->id) }}" question="{{ __('app.jobs.confirm_archive') }}">
@@ -226,7 +229,7 @@
                                     </form>
                                 @else
                                     <div class="flex space-x-2 pt-3">
-                                        <a href="{{ route('job-vacancies.edit', $jobVacancy->id) }}" class="flex-1 flex items-center justify-center px-4 py-2 bg-amber-50 border border-amber-100 text-amber-600 rounded-xl text-sm font-bold hover:bg-amber-100 transition-colors shadow-sm">
+                                        <a href="{{ route('job-vacancies.edit', $jobVacancy->id) }}" class="flex-1 flex items-center justify-center px-4 py-2 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-xl text-sm font-bold hover:bg-indigo-100 transition-colors shadow-sm">
                                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             {{ __('app.common.edit') }}
                                         </a>
