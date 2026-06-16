@@ -117,11 +117,17 @@ class DashboardController extends Controller
                 ->orderByDesc('totalCount')
                 ->get()
                 ->map(function ($job) {
-                    if($job->viewCount > 0) {
-                        $job->conversionRate = min(100, round( $job->totalCount / $job->viewCount * 100, 2));
+                    // Use max(viewCount, totalCount) as denominator to handle cases where
+                    // applicants submit directly (via API/external link) without visiting the page,
+                    // which would otherwise cause applications > views and rate > 100%.
+                    $denominator = max((int) $job->viewCount, (int) $job->totalCount);
+                    if ($denominator > 0) {
+                        $job->conversionRate = round($job->totalCount / $denominator * 100, 2);
                     } else {
                         $job->conversionRate = 0;
                     }
+                    // Expose raw view count so the view can show actual page views separately
+                    $job->rawViewCount = (int) $job->viewCount;
                     return $job;
                 });
         });
@@ -259,11 +265,17 @@ class DashboardController extends Controller
                 ->orderByDesc('totalCount')
                 ->get()
                 ->map(function ($job) {
-                    if($job->viewCount > 0) {
-                        $job->conversionRate = min(100, round( $job->totalCount / $job->viewCount * 100, 2));
+                    // Use max(viewCount, totalCount) as denominator to handle cases where
+                    // applicants submit directly (via API/external link) without visiting the page,
+                    // which would otherwise cause applications > views and rate > 100%.
+                    $denominator = max((int) $job->viewCount, (int) $job->totalCount);
+                    if ($denominator > 0) {
+                        $job->conversionRate = round($job->totalCount / $denominator * 100, 2);
                     } else {
                         $job->conversionRate = 0;
                     }
+                    // Expose raw view count so the view can show actual page views separately
+                    $job->rawViewCount = (int) $job->viewCount;
                     return $job;
                 });
         });
