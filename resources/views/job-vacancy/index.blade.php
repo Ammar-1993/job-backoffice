@@ -68,7 +68,7 @@
                                                 {{ mb_strtoupper(mb_substr($jobVacancy->title, 0, 1)) }}
                                             </div>
                                             <div>
-                                                <div class="text-base font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">
+                                                <div class="text-sm font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">
                                                     @if(request('archived') != 'true')
                                                         <a href="{{ route('job-vacancies.show', $jobVacancy->id) }}" class="hover:underline">{{ $jobVacancy->title }}</a>
                                                     @else
@@ -161,7 +161,7 @@
                             <div class="space-y-4">
                                 <!-- Title and Company -->
                                 <div>
-                                    <h3 class="font-extrabold text-lg text-gray-900 leading-tight">
+                                    <h3 class="font-bold text-base text-gray-900 leading-tight">
                                         @if(request('archived') != 'true')
                                             <a href="{{ route('job-vacancies.show', $jobVacancy->id) }}" class="text-indigo-600 hover:underline">
                                                 {{ $jobVacancy->title }}
