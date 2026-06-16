@@ -20,6 +20,9 @@ return [
         'error' => 'Error',
         'warning' => 'Warning',
         'info' => 'Information',
+        'all_rights_reserved' => 'All rights reserved.',
+        'back_to_login' => 'Back to login',
+        'view' => 'View',
     ],
     'nav' => [
         'dashboard' => 'Dashboard',
@@ -64,9 +67,12 @@ return [
 
     'auth' => [
         'email' => 'Email',
+        'email_placeholder' => 'name@example.com',
         'password' => 'Password',
         'remember_me' => 'Remember me',
         'login' => 'Log in',
+        'welcome_back' => 'Welcome Back',
+        'login_to_continue' => 'Please sign in to your account',
         'register' => 'Register',
         'name' => 'Name',
         'confirm_password' => 'Confirm Password',
@@ -81,6 +87,8 @@ return [
         'verification_link_sent' => 'A new verification link has been sent to the email address you provided during registration.',
         'resend_verification_email' => 'Resend Verification Email',
         'log_out' => 'Log Out',
+        'verify_email' => 'Verify Email Address',
+        'reset_password_desc' => 'Choose a new password for your account',
     ],
     'profile' => [
         'title' => 'Profile',
