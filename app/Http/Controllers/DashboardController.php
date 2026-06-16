@@ -154,6 +154,36 @@ class DashboardController extends Controller
             return $query->groupBy('status')->get();
         });
 
+        // Actionable Alerts
+        $actionableAlerts = [];
+        
+        $unreviewedApplicationsCount = Cache::remember("admin_unreviewed_applications", 600, function () {
+            return JobApplication::where('status', \App\Enums\ApplicationStatus::PENDING)
+                ->where('created_at', '<=', now()->subDays(7))
+                ->whereNull('deleted_at')
+                ->count();
+        });
+
+        if ($unreviewedApplicationsCount > 0) {
+            $actionableAlerts[] = [
+                'type' => 'warning',
+                'message' => __('app.dashboard.unreviewed_applications_admin', ['count' => $unreviewedApplicationsCount])
+            ];
+        }
+
+        $emptyCompaniesCount = Cache::remember("admin_empty_companies", 600, function () {
+            return \App\Models\Company::doesntHave('jobVacancies')
+                ->whereNull('deleted_at')
+                ->count();
+        });
+
+        if ($emptyCompaniesCount > 0) {
+            $actionableAlerts[] = [
+                'type' => 'info',
+                'message' => __('app.dashboard.empty_companies_admin', ['count' => $emptyCompaniesCount])
+            ];
+        }
+
         return [
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
@@ -187,6 +217,7 @@ class DashboardController extends Controller
                 'conversionRates' => collect(),
                 'applicationsOverTime' => collect(),
                 'applicationStatuses' => collect(),
+                'actionableAlerts' => [],
                 'rangeLabel' => $rangeLabel
             ];
         }
@@ -304,6 +335,37 @@ class DashboardController extends Controller
             return $query->groupBy('status')->get();
         });
 
+        // Actionable Alerts
+        $actionableAlerts = [];
+
+        $pendingApplicationsCount = Cache::remember("company_{$company->id}_pending_applications", 600, function () use ($company) {
+            return JobApplication::whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
+                ->where('status', \App\Enums\ApplicationStatus::PENDING)
+                ->whereNull('deleted_at')
+                ->count();
+        });
+
+        if ($pendingApplicationsCount > 0) {
+            $actionableAlerts[] = [
+                'type' => 'warning',
+                'message' => __('app.dashboard.pending_applications_company', ['count' => $pendingApplicationsCount])
+            ];
+        }
+
+        $jobsWithoutApplicationsCount = Cache::remember("company_{$company->id}_empty_jobs", 600, function () use ($company) {
+            return JobVacancy::where('companyId', $company->id)
+                ->doesntHave('jobApplications')
+                ->whereNull('deleted_at')
+                ->count();
+        });
+
+        if ($jobsWithoutApplicationsCount > 0) {
+            $actionableAlerts[] = [
+                'type' => 'info',
+                'message' => __('app.dashboard.empty_jobs_company', ['count' => $jobsWithoutApplicationsCount])
+            ];
+        }
+
         return [
             'activeUsers' => $activeUsers,
             'totalJobs' => $totalJobs,
@@ -315,6 +377,7 @@ class DashboardController extends Controller
             'conversionRates' => $conversionRates,
             'applicationsOverTime' => $applicationsOverTime,
             'applicationStatuses' => $applicationStatuses,
+            'actionableAlerts' => $actionableAlerts,
             'rangeLabel' => $rangeLabel
         ];
     }

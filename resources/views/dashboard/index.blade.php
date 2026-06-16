@@ -4,9 +4,9 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('app.dashboard.title') }}
             </h2>
-            <form method="GET" action="{{ route('dashboard') }}" class="flex items-center space-x-2 rtl:space-x-reverse">
+            <form method="GET" action="{{ route('dashboard') }}" class="flex items-center space-x-2 rtl:space-x-reverse" id="filter-form" onsubmit="event.preventDefault(); updateDashboard(document.getElementById('range').value);">
                 <label for="range" class="text-sm font-medium text-gray-700">{{ __('app.dashboard.filter_by') ?? 'Filter:' }}</label>
-                <select name="range" id="range" onchange="this.form.submit()" class="border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-md shadow-sm text-sm">
+                <select name="range" id="range" onchange="updateDashboard(this.value)" class="border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-md shadow-sm text-sm">
                     <option value="today" {{ $range == 'today' ? 'selected' : '' }}>{{ __('app.dashboard.today') ?? 'Today' }}</option>
                     <option value="this_week" {{ $range == 'this_week' ? 'selected' : '' }}>{{ __('app.dashboard.this_week') ?? 'This Week' }}</option>
                     <option value="this_month" {{ $range == 'this_month' ? 'selected' : '' }}>{{ __('app.dashboard.this_month') ?? 'This Month' }}</option>
@@ -18,7 +18,25 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col gap-6">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col gap-6" id="dashboard-content" style="transition: opacity 0.3s ease;">
+        
+        <!-- Needs Attention Alerts -->
+        @if(isset($analytics['actionableAlerts']) && count($analytics['actionableAlerts']) > 0)
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl shadow-sm">
+                <div class="flex items-center mb-3">
+                    <svg class="w-6 h-6 text-amber-500 mr-2 rtl:ml-2 rtl:mr-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <h3 class="text-lg font-bold text-amber-800">{{ __('app.dashboard.needs_attention') }}</h3>
+                </div>
+                <ul class="list-disc list-inside text-sm text-amber-700 space-y-1 font-medium">
+                    @foreach($analytics['actionableAlerts'] as $alert)
+                        <li>{{ $alert['message'] }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Overview Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {{-- Metric Card 1: Active Users --}}
@@ -203,85 +221,136 @@
                 <div id="statusesChart"></div>
             </div>
         </div>
+        <!-- Inline Script for Charts (Moved inside dashboard-content for AJAX re-evaluation) -->
+        <script>
+            // Generate unique IDs for charts to avoid conflicts during AJAX re-renders
+            (function() {
+                const appChartEl = document.querySelector("#applicationsChart");
+                const statChartEl = document.querySelector("#statusesChart");
+                
+                if (appChartEl && !appChartEl.hasChildNodes()) {
+                    const timeData = @json($analytics['applicationsOverTime']);
+                    const dates = timeData.map(item => item.date);
+                    const counts = timeData.map(item => item.count);
+
+                    const lineOptions = {
+                        chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'inherit' },
+                        series: [{ name: 'Applications', data: counts }],
+                        xaxis: { categories: dates, type: 'category' },
+                        yaxis: { 
+                            min: 0,
+                            forceNiceScale: true,
+                            labels: { formatter: function(val) { return Math.floor(val); } }
+                        },
+                        colors: ['#4f46e5'],
+                        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 90, 100] } },
+                        dataLabels: { enabled: false },
+                        stroke: { curve: 'smooth', width: 3 }
+                    };
+                    
+                    if(counts.length > 0) {
+                        new ApexCharts(appChartEl, lineOptions).render();
+                    } else {
+                        appChartEl.innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
+                    }
+                }
+
+                if (statChartEl && !statChartEl.hasChildNodes()) {
+                    const statusData = @json($analytics['applicationStatuses']);
+                    const labels = statusData.map(item => {
+                        return item.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    });
+                    const series = statusData.map(item => item.count);
+                    
+                    const colors = statusData.map(item => {
+                        if(item.status === 'accepted') return '#10b981';
+                        if(item.status === 'rejected') return '#ef4444';
+                        return '#6b7280'; // pending
+                    });
+
+                    const donutOptions = {
+                        chart: { type: 'donut', height: 350, fontFamily: 'inherit' },
+                        series: series,
+                        labels: labels,
+                        colors: colors,
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    size: '70%',
+                                    labels: {
+                                        show: true,
+                                        name: { show: true },
+                                        value: { show: true }
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: { enabled: false },
+                        legend: { 
+                            position: 'bottom',
+                            formatter: function(seriesName, opts) {
+                                const val = opts.w.globals.series[opts.seriesIndex];
+                                const total = opts.w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                const percent = total > 0 ? Math.round((val / total) * 100) : 0;
+                                return seriesName + ' — ' + val + ' (' + percent + '%)';
+                            }
+                        }
+                    };
+                    
+                    if(series.length > 0) {
+                        new ApexCharts(statChartEl, donutOptions).render();
+                    } else {
+                        statChartEl.innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
+                    }
+                }
+            })();
+        </script>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Applications Over Time Chart (Line Chart)
-            const timeData = @json($analytics['applicationsOverTime']);
-            const dates = timeData.map(item => item.date);
-            const counts = timeData.map(item => item.count);
+        function updateDashboard(range) {
+            const container = document.querySelector('#dashboard-content');
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
 
-            const lineOptions = {
-                chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'inherit' },
-                series: [{ name: 'Applications', data: counts }],
-                xaxis: { categories: dates, type: 'category' },
-                yaxis: { 
-                    min: 0,
-                    forceNiceScale: true,
-                    labels: { formatter: function(val) { return Math.floor(val); } }
-                },
-                colors: ['#4f46e5'],
-                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 90, 100] } },
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 3 }
-            };
-            
-            if(counts.length > 0) {
-                new ApexCharts(document.querySelector("#applicationsChart"), lineOptions).render();
-            } else {
-                document.querySelector("#applicationsChart").innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
-            }
+            // Push state to update URL without reloading
+            const url = new URL(window.location);
+            url.searchParams.set('range', range);
+            window.history.pushState({}, '', url);
 
-            // Application Statuses Chart (Donut Chart)
-            const statusData = @json($analytics['applicationStatuses']);
-            const labels = statusData.map(item => {
-                return item.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-            });
-            const series = statusData.map(item => item.count);
-            
-            // Assign colors based on status
-            const colors = statusData.map(item => {
-                if(item.status === 'accepted') return '#10b981';
-                if(item.status === 'rejected') return '#ef4444';
-                return '#6b7280'; // pending
-            });
-
-            const donutOptions = {
-                chart: { type: 'donut', height: 350, fontFamily: 'inherit' },
-                series: series,
-                labels: labels,
-                colors: colors,
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '70%',
-                            labels: {
-                                show: true,
-                                name: { show: true },
-                                value: { show: true }
-                            }
-                        }
-                    }
-                },
-                dataLabels: { enabled: false },
-                legend: { 
-                    position: 'bottom',
-                    formatter: function(seriesName, opts) {
-                        const val = opts.w.globals.series[opts.seriesIndex];
-                        const total = opts.w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                        const percent = total > 0 ? Math.round((val / total) * 100) : 0;
-                        return seriesName + ' — ' + val + ' (' + percent + '%)';
-                    }
+            fetch('?range=' + range, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Find the new content
+                const newContent = doc.querySelector('#dashboard-content');
+                if (newContent) {
+                    container.innerHTML = newContent.innerHTML;
+                    
+                    // Re-execute scripts within the new content to re-render charts
+                    const scripts = container.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                        newScript.remove();
+                    });
                 }
-            };
-            
-            if(series.length > 0) {
-                new ApexCharts(document.querySelector("#statusesChart"), donutOptions).render();
-            } else {
-                document.querySelector("#statusesChart").innerHTML = '<div class="text-center text-gray-500 py-10">No data available yet</div>';
-            }
-        });
+
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            })
+            .catch(err => {
+                console.error('Failed to update dashboard:', err);
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            });
+        }
     </script>
 </x-app-layout>
