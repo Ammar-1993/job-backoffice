@@ -108,8 +108,8 @@ return [
     ],
     'jobs' => [
         'title' => 'Job Vacancies',
-        'active_jobs' => 'Active Jobs',
-        'archived_jobs' => 'Archived Jobs',
+        'active_jobs' => 'Active',
+        'archived_jobs' => 'Archived',
         'add_job' => 'Add Job',
         'search_placeholder' => 'Search job title...',
         'details' => 'Job Details',
@@ -179,8 +179,8 @@ return [
     ],
     'companies' => [
         'directory_title' => 'Companies Directory',
-        'active_companies' => 'Active Companies',
-        'archived_companies' => 'Archived Companies',
+        'active_companies' => 'Active',
+        'archived_companies' => 'Archived',
         'search_placeholder' => 'Search companies...',
         'add_company' => 'Add Company',
         'name' => 'Company Name',
@@ -236,8 +236,8 @@ return [
     ],
     'users' => [
         'title' => 'Users Management',
-        'active_users' => 'Active Users',
-        'archived_users' => 'Archived Users',
+        'active_users' => 'Active',
+        'archived_users' => 'Archived',
         'search_placeholder' => 'Search users...',
         'add_user' => 'Add User',
         'details' => 'User Details',
