@@ -76,13 +76,10 @@
                 </div>
             </div>
 
-            <!-- Content Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <!-- Left Column: Details -->
-                <div class="lg:col-span-1 space-y-8">
+            <!-- Top Details Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <!-- About Job Card -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden h-full">
                         <div class="px-6 py-5 border-b border-gray-100 bg-gray-50/50">
                             <h3 class="text-lg font-extrabold text-gray-900 flex items-center">
                                 <svg class="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -115,7 +112,7 @@
                     </div>
 
                     <!-- Description Card -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden h-full">
                         <div class="px-6 py-5 border-b border-gray-100 bg-gray-50/50">
                             <h3 class="text-lg font-extrabold text-gray-900 flex items-center">
                                 <svg class="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
@@ -132,10 +129,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+            </div>
 
-                <!-- Right Column: Applications Tab -->
-                <div class="lg:col-span-2">
+            <!-- Applications Full Width -->
+            <div>
                     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                         
                         <!-- Header & Tabs -->
