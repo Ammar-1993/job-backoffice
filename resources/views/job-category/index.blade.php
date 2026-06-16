@@ -26,11 +26,11 @@
 
                 <!-- Search & Add -->
                 <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-                    <form method="GET" action="{{ route('job-categories.index') }}" class="relative w-full sm:w-72">
+                    <form method="GET" action="{{ route('job-categories.index') }}" class="relative group w-full sm:w-72">
                          @if(request('archived'))
                             <input type="hidden" name="archived" value="true">
                         @endif
-                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-400">
+                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-400 group-focus-within:text-indigo-600 transition-colors">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </span>
                         <input type="text" name="search" value="{{ request('search') }}" 
@@ -39,7 +39,7 @@
                     </form>
 
                     <a href="{{ route('job-categories.create') }}" 
-                       class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 border border-transparent rounded-xl font-bold text-sm text-white shadow-md hover:shadow-lg hover:from-indigo-500 hover:to-indigo-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 active:scale-95 w-full sm:w-auto justify-center">
+                       class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 border border-transparent rounded-xl font-bold text-sm text-white shadow-md hover:shadow-lg hover:from-indigo-700 hover:to-purple-700 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 active:scale-[0.98] w-full sm:w-auto justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         {{ __('app.categories.add_category') }}
                     </a>
