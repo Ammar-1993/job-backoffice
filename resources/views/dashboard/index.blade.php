@@ -225,7 +225,7 @@
                 colors: ['#4f46e5'],
                 fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 90, 100] } },
                 dataLabels: { enabled: false },
-                stroke: { curve: 'straight', width: 3 }
+                stroke: { curve: 'smooth', width: 3 }
             };
             
             if(counts.length > 0) {

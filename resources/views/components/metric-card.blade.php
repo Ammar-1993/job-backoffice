@@ -83,7 +83,7 @@
     $interactiveClasses = $hasHref ? "cursor-pointer hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 {$ringColor}" : '';
 @endphp
 
-<div {{ $attributes->merge([ 'class' => "p-6 bg-white border border-gray-50 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-xl {$interactiveClasses} metric-card transition-all duration-200 ease-in-out" ]) }} @if($hasHref) data-href="{{ $dataHref }}" tabindex="0" role="link" @endif>
+<div {{ $attributes->merge([ 'class' => "p-6 bg-white border border-gray-50 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:-translate-y-1 hover:shadow-lg rounded-xl {$interactiveClasses} metric-card transition-all duration-300 ease-in-out" ]) }} @if($hasHref) data-href="{{ $dataHref }}" tabindex="0" role="link" @endif>
     <div class="flex items-start justify-between">
         <div>
             <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ $title }}</h3>
