@@ -38,7 +38,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                 </div>
-                                <input type="text" name="name" id="name" value="{{ old('name', $company->name) }}"
+                                <input type="text" name="name" id="name" value="{{ old('name', $company->name) }}" placeholder="{{ __('app.companies.name_placeholder') }}"
                                     class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }}">
                             </div>
                             @error('name')
@@ -52,7 +52,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 </div>
-                                <input type="text" name="address" id="address" value="{{ old('address', $company->address) }}"
+                                <input type="text" name="address" id="address" value="{{ old('address', $company->address) }}" placeholder="{{ __('app.companies.address_placeholder') }}"
                                     class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('address') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }}">
                             </div>
                             @error('address')
@@ -84,7 +84,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                                 </div>
-                                <input type="text" name="website" id="website" value="{{ old('website', $company->website) }}"
+                                <input type="text" name="website" id="website" value="{{ old('website', $company->website) }}" placeholder="{{ __('app.companies.website_placeholder') }}"
                                     class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('website') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }}">
                             </div>
                             @error('website')
@@ -113,7 +113,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 </div>
-                                <input type="text" name="owner_name" id="owner_name" value="{{ old('owner_name', $company->owner->name) }}"
+                                <input type="text" name="owner_name" id="owner_name" value="{{ old('owner_name', $company->owner->name) }}" placeholder="{{ __('app.companies.owner_name_placeholder') }}"
                                     class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('owner_name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-500' }}">
                             </div>
                             @error('owner_name')
@@ -145,7 +145,7 @@
                                 </div>
                                 <input id="owner_password" class="pl-10 pr-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('owner_password') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-500' }}"
                                     x-bind:type="showPassword ? 'text' : 'password'" name="owner_password"
-                                    autocomplete="current-password" />
+                                    placeholder="{{ __('app.companies.owner_password_placeholder') }}" autocomplete="current-password" />
 
                                 <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-emerald-600 transition-colors"
                                     @click="showPassword = !showPassword" tabindex="-1">
