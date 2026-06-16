@@ -240,15 +240,12 @@
                 <div id="AIFeedback" class="{{ request('tab') == 'AIFeedback' ? 'block space-y-6' : 'hidden' }}">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <!-- Score Card -->
-                        <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 p-8 rounded-2xl shadow-md text-white flex flex-col justify-center items-center relative overflow-hidden">
-                            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white rounded-full opacity-10"></div>
-                            <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-16 h-16 bg-white rounded-full opacity-10"></div>
-                            
-                            <h4 class="text-lg font-bold text-indigo-100 mb-2 relative z-10">{{ __('app.applications.ai_score') }}</h4>
-                            <div class="text-7xl font-black text-white relative z-10 my-4 flex items-baseline drop-shadow-md">
-                                {{ $jobApplication->aiGeneratedScore ?? '0' }}<span class="text-3xl text-indigo-200 ml-1">%</span>
+                        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center relative overflow-hidden h-full">
+                            <h4 class="text-lg font-bold text-gray-800 mb-2 relative z-10">{{ __('app.applications.ai_score') }}</h4>
+                            <div class="relative w-full flex justify-center items-center min-h-[220px]">
+                                <div id="aiMatchChart"></div>
                             </div>
-                            <div class="text-sm font-bold relative z-10 bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-inner border border-white/30">AI Match Index</div>
+                            <div class="text-sm font-bold relative z-10 bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full mt-2 border border-indigo-100">AI Match Index</div>
                         </div>
                         
                         <!-- Feedback Card -->
@@ -266,4 +263,84 @@
         </div>
     </div>
 
+    <!-- ApexCharts for AI Match Circle -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var score = {{ $jobApplication->aiGeneratedScore ?? 0 }};
+            
+            // Dynamic Color based on score
+            var color = '#10b981'; // Emerald/Green for > 75%
+            var gradientColor = '#34d399';
+            if (score < 50) {
+                color = '#ef4444'; // Rose/Red for < 50%
+                gradientColor = '#f87171';
+            } else if (score < 75) {
+                color = '#f59e0b'; // Amber/Yellow for 50-74%
+                gradientColor = '#fbbf24';
+            }
+
+            var options = {
+                series: [score],
+                chart: {
+                    height: 280,
+                    type: 'radialBar',
+                    fontFamily: 'inherit',
+                },
+                plotOptions: {
+                    radialBar: {
+                        startAngle: -135,
+                        endAngle: 135,
+                        hollow: {
+                            margin: 15,
+                            size: '65%',
+                            background: 'transparent',
+                        },
+                        track: {
+                            background: '#f3f4f6',
+                            strokeWidth: '100%',
+                            margin: 0,
+                            dropShadow: {
+                                enabled: true,
+                                top: 0,
+                                left: 0,
+                                blur: 3,
+                                opacity: 0.1
+                            }
+                        },
+                        dataLabels: {
+                            show: true,
+                            name: { show: false },
+                            value: {
+                                formatter: function(val) { return parseInt(val) + "%"; },
+                                color: color,
+                                fontSize: '36px',
+                                fontWeight: 800,
+                                show: true,
+                                offsetY: 10,
+                            }
+                        }
+                    }
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: [gradientColor],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                    }
+                },
+                stroke: { lineCap: 'round' },
+                colors: [color],
+            };
+
+            var chart = new ApexCharts(document.querySelector("#aiMatchChart"), options);
+            chart.render();
+        });
+    </script>
 </x-app-layout>
