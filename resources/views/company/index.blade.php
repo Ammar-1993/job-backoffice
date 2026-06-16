@@ -66,7 +66,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="h-11 w-11 flex-shrink-0 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg border border-indigo-100 shadow-sm transform transition-transform group-hover:scale-105">
-                                                {{ strtoupper(substr($company->name, 0, 1)) }}
+                                                {{ mb_strtoupper(mb_substr($company->name, 0, 1)) }}
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-medium text-gray-900">

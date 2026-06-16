@@ -28,7 +28,7 @@
                 <div class="flex justify-between items-end -mt-12 mb-6">
                     <div class="h-24 w-24 rounded-2xl bg-white p-1.5 shadow-md">
                         <div class="h-full w-full rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-4xl border border-indigo-100">
-                            {{ strtoupper(substr($company->name, 0, 1)) }}
+                            {{ mb_strtoupper(mb_substr($company->name, 0, 1)) }}
                         </div>
                     </div>
                     

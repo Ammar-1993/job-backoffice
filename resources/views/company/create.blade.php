@@ -18,48 +18,68 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">{{ __('app.companies.details') }}</h3>
-                            <p class="text-sm text-gray-500">{{ __('app.companies.enter_details') }}</p>
+                            <p class="text-sm text-gray-500 font-medium">{{ __('app.companies.enter_details') }}</p>
                         </div>
                     </div>
 
                     <div class="space-y-5">
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_name') }}</label>
-                            <input type="text" name="name" id="name" value="{{ old('name') }}"
-                                class="{{ $errors->has('name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                        <div class="space-y-1">
+                            <label for="name" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.form_name') }}</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                </div>
+                                <input type="text" name="name" id="name" value="{{ old('name') }}"
+                                    class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }}">
+                            </div>
                             @error('name')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="address" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_address') }}</label>
-                            <input type="text" name="address" id="address" value="{{ old('address') }}"
-                                class="{{ $errors->has('address') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                        <div class="space-y-1">
+                            <label for="address" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.form_address') }}</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <input type="text" name="address" id="address" value="{{ old('address') }}"
+                                    class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('address') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }}">
+                            </div>
                             @error('address')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="industry" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_industry') }}</label>
-                            <select name="industry" id="industry"
-                                class="block w-full rounded-xl shadow-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
-                                @foreach ($industries as $industry)
-                                    <option value="{{ $industry }}">{{ $industry }}</option>
-                                @endforeach
-                            </select>
+                        <div class="space-y-1">
+                            <label for="industry" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.form_industry') }}</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <select name="industry" id="industry"
+                                    class="pl-10 block w-full rounded-xl shadow-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                                    @foreach ($industries as $industry)
+                                        <option value="{{ $industry }}">{{ $industry }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             @error('industry')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="website" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.form_website') }}</label>
-                            <input type="text" name="website" id="website" value="{{ old('website') }}"
-                                class="{{ $errors->has('website') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                        <div class="space-y-1">
+                            <label for="website" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.form_website') }}</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                </div>
+                                <input type="text" name="website" id="website" value="{{ old('website') }}"
+                                    class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('website') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }}">
+                            </div>
                             @error('website')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -73,56 +93,58 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">{{ __('app.companies.owner_section') }}</h3>
-                            <p class="text-sm text-gray-500">{{ __('app.companies.enter_owner_details') }}</p>
+                            <p class="text-sm text-gray-500 font-medium">{{ __('app.companies.enter_owner_details') }}</p>
                         </div>
                     </div>
 
                     <div class="space-y-5">
-                        <div>
-                            <label for="owner_name" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.owner_name') }}</label>
-                            <input type="text" name="owner_name" id="owner_name" value="{{ old('owner_name') }}"
-                                class="{{ $errors->has('owner_name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                        <div class="space-y-1">
+                            <label for="owner_name" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.owner_name') }}</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                </div>
+                                <input type="text" name="owner_name" id="owner_name" value="{{ old('owner_name') }}"
+                                    class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('owner_name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-500' }}">
+                            </div>
                             @error('owner_name')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="owner_email" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.owner_email') }}</label>
-                            <input type="email" name="owner_email" id="owner_email" value="{{ old('owner_email') }}"
-                                class="{{ $errors->has('owner_email') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white">
+                        <div class="space-y-1">
+                            <label for="owner_email" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.owner_email') }}</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <input type="email" name="owner_email" id="owner_email" value="{{ old('owner_email') }}"
+                                    class="pl-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('owner_email') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-500' }}">
+                            </div>
                             @error('owner_email')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Owner Password -->
-                        <div>
-                            <label for="owner_password" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('app.companies.owner_password') }}</label>
-                            <div class="relative" x-data="{ showPassword: false }">
-                                <x-text-input id="owner_password" class="{{ $errors->has('owner_password') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500' }} block w-full rounded-xl shadow-sm transition-colors sm:text-sm py-2.5 bg-gray-50 focus:bg-white pr-10"
+                        <div class="space-y-1">
+                            <label for="owner_password" class="block text-sm font-semibold text-gray-700">{{ __('app.companies.owner_password') }}</label>
+                            <div class="relative group" x-data="{ showPassword: false }">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </div>
+                                <input id="owner_password" class="pl-10 pr-10 block w-full rounded-xl shadow-sm transition-all sm:text-sm py-2.5 bg-gray-50 focus:bg-white {{ $errors->has('owner_password') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-500' }}"
                                     x-bind:type="showPassword ? 'text' : 'password'" name="owner_password" required
-                                    autocomplete="current-password" />
+                                    autocomplete="new-password" />
 
-                                <button type="button" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-indigo-600 transition-colors"
-                                    @click="showPassword = !showPassword">
-
-                                    <!-- Eye Icon Open -->
-                                    <svg x-show="showPassword" width="20px" height="20px" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                        <path d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-
-                                    <!-- Eye Icon Closed -->
-                                    <svg x-show="!showPassword" width="20px" height="20px" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                        <path d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-emerald-600 transition-colors"
+                                    @click="showPassword = !showPassword" tabindex="-1">
+                                    <svg x-show="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 5 8.268 7.943 9.542 12-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                    <svg x-show="!showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                                 </button>
                             </div>
                             @error('owner_password')
-                                <p class="mt-1.5 text-sm text-rose-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
+                                <p class="mt-1.5 text-sm text-rose-600 flex items-center font-medium"><svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -134,7 +156,7 @@
                         {{ __('app.common.cancel') }}
                     </a>
                     <button type="submit"
-                        class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 border border-transparent rounded-xl font-bold text-white shadow-md hover:shadow-lg hover:from-indigo-500 hover:to-indigo-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 active:scale-95">
+                        class="inline-flex justify-center items-center px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 border border-transparent rounded-xl font-bold text-white shadow-sm hover:shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all duration-300">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         {{ __('app.companies.add_btn') }}
                     </button>
