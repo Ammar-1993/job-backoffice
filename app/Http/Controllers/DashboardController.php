@@ -158,7 +158,7 @@ class DashboardController extends Controller
         $actionableAlerts = [];
         
         $unreviewedApplicationsCount = Cache::remember("admin_unreviewed_applications", 600, function () {
-            return JobApplication::where('status', \App\Enums\ApplicationStatus::PENDING)
+            return JobApplication::where('status', \App\Enums\ApplicationStatus::Pending)
                 ->where('created_at', '<=', now()->subDays(7))
                 ->whereNull('deleted_at')
                 ->count();
@@ -340,7 +340,7 @@ class DashboardController extends Controller
 
         $pendingApplicationsCount = Cache::remember("company_{$company->id}_pending_applications", 600, function () use ($company) {
             return JobApplication::whereIn('jobVacancyId', $company->jobVacancies->pluck('id'))
-                ->where('status', \App\Enums\ApplicationStatus::PENDING)
+                ->where('status', \App\Enums\ApplicationStatus::Pending)
                 ->whereNull('deleted_at')
                 ->count();
         });
