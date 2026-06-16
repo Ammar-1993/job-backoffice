@@ -107,11 +107,17 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($analytics['mostAppliedJobs'] as $job)
                             <tr>
-                                <td class="py-4 whitespace-nowrap text-sm text-gray-900">{{ $job->title }}</td>
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                    <a href="{{ route('job-vacancies.show', $job->id) }}" class="text-primary-600 hover:text-primary-800 transition-colors">
+                                        {{ $job->title }}
+                                    </a>
+                                </td>
                                 @if(auth()->user()->role == 'admin')
                                     <td class="py-4 whitespace-nowrap text-sm text-gray-600">
                                         @if($job->company)
-                                            {{ $job->company->name }}
+                                            <a href="{{ route('companies.show', $job->company->id) }}" class="text-indigo-600 hover:text-indigo-800 transition-colors font-medium">
+                                                {{ $job->company->name }}
+                                            </a>
                                         @else
                                             <span class="text-xs text-red-500">{{ __('app.dashboard.company_deleted') }}</span>
                                         @endif
@@ -146,7 +152,11 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($analytics['conversionRates'] as $conversionRate)
                             <tr>
-                                <td class="py-4 whitespace-nowrap text-sm text-gray-900">{{ $conversionRate->title }}</td>
+                                <td class="py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                    <a href="{{ route('job-vacancies.show', $conversionRate->id) }}" class="text-primary-600 hover:text-primary-800 transition-colors">
+                                        {{ $conversionRate->title }}
+                                    </a>
+                                </td>
                                 <td class="py-4 whitespace-nowrap text-sm text-gray-600">{{ $conversionRate->viewCount }}</td>
                                 <td class="py-4 whitespace-nowrap text-sm text-gray-600">{{ $conversionRate->totalCount }}</td>
                                 <td class="py-4 whitespace-nowrap text-sm font-medium">
@@ -207,10 +217,15 @@
                 chart: { type: 'area', height: 350, toolbar: { show: false }, fontFamily: 'inherit' },
                 series: [{ name: 'Applications', data: counts }],
                 xaxis: { categories: dates, type: 'category' },
+                yaxis: { 
+                    min: 0,
+                    forceNiceScale: true,
+                    labels: { formatter: function(val) { return Math.floor(val); } }
+                },
                 colors: ['#4f46e5'],
                 fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 90, 100] } },
                 dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 3 }
+                stroke: { curve: 'straight', width: 3 }
             };
             
             if(counts.length > 0) {
@@ -251,7 +266,15 @@
                     }
                 },
                 dataLabels: { enabled: false },
-                legend: { position: 'bottom' }
+                legend: { 
+                    position: 'bottom',
+                    formatter: function(seriesName, opts) {
+                        const val = opts.w.globals.series[opts.seriesIndex];
+                        const total = opts.w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                        const percent = total > 0 ? Math.round((val / total) * 100) : 0;
+                        return seriesName + ' — ' + val + ' (' + percent + '%)';
+                    }
+                }
             };
             
             if(series.length > 0) {
