@@ -19,7 +19,7 @@
                 
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('job-vacancies.edit', ['job_vacancy' => $jobVacancy->id, 'redirectToList' => 'false']) }}"
-                        class="inline-flex items-center px-4 py-2 bg-white border border-indigo-100 rounded-xl text-sm font-bold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 shadow-sm transition-all duration-300">
+                        class="inline-flex items-center px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-xl text-sm font-bold text-indigo-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         {{ __('app.common.edit') }}
                     </a>
@@ -27,7 +27,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-white border border-rose-100 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-50 hover:border-rose-200 shadow-sm transition-all duration-300">
+                            class="inline-flex items-center px-4 py-2 bg-rose-50 border border-rose-100 rounded-xl text-sm font-bold text-rose-700 hover:bg-rose-600 hover:text-white hover:border-rose-600 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             {{ __('app.common.archive') ?? 'Archive' }}
                         </button>
@@ -38,9 +38,9 @@
             <!-- Profile Header Card -->
             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-8 relative">
                 <!-- Cover Gradient -->
-                <div class="h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
-                    <div class="absolute -bottom-16 -right-16 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+                <div class="h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 relative overflow-hidden bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                    <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px]"></div>
+                    <div class="absolute -bottom-16 -right-16 w-64 h-64 bg-white opacity-20 rounded-full blur-3xl"></div>
                 </div>
                 
                 <div class="px-8 pb-8 pt-0 relative z-10">
@@ -178,7 +178,7 @@
                                                                 <div class="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
                                                                     {{ optional($application->user)->name ?? 'Unknown Applicant' }}
                                                                 </div>
-                                                                <div class="text-sm text-gray-500 font-medium">
+                                                                <div class="text-sm text-gray-500 font-medium max-w-[150px] sm:max-w-[200px] truncate" title="{{ optional($application->user)->email }}">
                                                                     {{ optional($application->user)->email ?? 'No email' }}
                                                                 </div>
                                                             </div>
@@ -188,10 +188,10 @@
                                                         @php
                                                             $statusValue = $application->status instanceof \UnitEnum ? $application->status->value : $application->status;
                                                             $statusColors = [
-                                                                'Pending' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                                                'Reviewed' => 'bg-blue-50 text-blue-700 border-blue-200',
-                                                                'Accepted' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                                                'Rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                                                'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                                'pending_analysis' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                                'accepted' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                                'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
                                                             ];
                                                             $colorClass = $statusColors[$statusValue] ?? 'bg-gray-50 text-gray-700 border-gray-200';
                                                         @endphp

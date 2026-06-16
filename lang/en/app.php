@@ -23,6 +23,7 @@ return [
         'all_rights_reserved' => 'All rights reserved.',
         'back_to_login' => 'Back to login',
         'view' => 'View',
+        'created_at' => 'Created At',
     ],
     'nav' => [
         'dashboard' => 'Dashboard',
