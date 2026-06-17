@@ -83,7 +83,7 @@
                 subtitle="{{ $analytics['rangeLabel'] }}" 
                 color="gray-600"
                 icon="Archive" 
-                href="{{ route('job-vacancies.index') }}" />
+                href="{{ route('job-vacancies.index', ['archived' => 'true']) }}" />
             
             {{-- Metric Card 5: Total Applications --}}
             <x-metric-card 
