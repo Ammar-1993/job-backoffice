@@ -286,12 +286,9 @@
                     height: 320,
                     type: 'radialBar',
                     fontFamily: 'inherit',
-                    offsetY: -10
                 },
                 plotOptions: {
                     radialBar: {
-                        startAngle: -135,
-                        endAngle: 135,
                         hollow: {
                             margin: 15,
                             size: '60%',
@@ -321,14 +318,6 @@
                                 offsetY: 15,
                             }
                         }
-                    }
-                },
-                grid: {
-                    padding: {
-                        top: 0,
-                        right: 0,
-                        bottom: 20,
-                        left: 0
                     }
                 },
                 fill: {
