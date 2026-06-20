@@ -242,8 +242,8 @@
                         <!-- Score Card -->
                         <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center relative overflow-hidden h-full">
                             <h4 class="text-lg font-bold text-gray-800 mb-2 relative z-10">{{ __('app.applications.ai_score') }}</h4>
-                            <div class="relative w-full flex justify-center items-center min-h-[220px]">
-                                <div id="aiMatchChart"></div>
+                            <div class="relative w-full flex justify-center items-center min-h-[260px] -mt-4">
+                                <div id="aiMatchChart" class="w-full flex justify-center"></div>
                             </div>
                             <div class="text-sm font-bold relative z-10 bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full mt-2 border border-indigo-100">AI Match Index</div>
                         </div>
@@ -283,9 +283,10 @@
             var options = {
                 series: [score],
                 chart: {
-                    height: 280,
+                    height: 320,
                     type: 'radialBar',
                     fontFamily: 'inherit',
+                    offsetY: -10
                 },
                 plotOptions: {
                     radialBar: {
@@ -293,7 +294,7 @@
                         endAngle: 135,
                         hollow: {
                             margin: 15,
-                            size: '65%',
+                            size: '60%',
                             background: 'transparent',
                         },
                         track: {
@@ -314,12 +315,20 @@
                             value: {
                                 formatter: function(val) { return parseInt(val) + "%"; },
                                 color: color,
-                                fontSize: '36px',
+                                fontSize: '42px',
                                 fontWeight: 800,
                                 show: true,
-                                offsetY: 10,
+                                offsetY: 15,
                             }
                         }
+                    }
+                },
+                grid: {
+                    padding: {
+                        top: 0,
+                        right: 0,
+                        bottom: 20,
+                        left: 0
                     }
                 },
                 fill: {
