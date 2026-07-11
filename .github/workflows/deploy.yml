@@ -25,9 +25,10 @@ jobs:
             cd /opt/job-platform
             docker compose up -d --build job-admin
             
-            echo "🧹 Clearing Backoffice Cache and Updating Autoloader..."
-            docker exec job_admin_web composer dump-autoload
+            echo "🧹 Clearing Backoffice Cache..."
             docker exec job_admin_web php artisan optimize:clear
-            docker exec job_admin_web php artisan storage:link
+            
+            echo "🗑️ Auto-cleaning old Docker images to save VPS space..."
+            docker image prune -f
             
             echo "✅ Deployment Successful!"
