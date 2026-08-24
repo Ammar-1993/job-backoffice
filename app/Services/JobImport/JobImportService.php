@@ -60,10 +60,10 @@ class JobImportService
                 }
 
                 $company = Company::firstOrCreate(
-                    ['name' => $item['company_name'] ?: 'غير معروف'],
+                    ['name' => $item['company_name'] ?: 'Unknown Company'],
                     [
-                        'address' => 'غير محدد (مستورد خارجيًا)',
-                        'industry' => 'غير محدد',
+                        'address' => 'Not specified (external import)',
+                        'industry' => 'Not specified',
                         'ownerId' => $systemUser->id,
                     ]
                 );
@@ -78,8 +78,8 @@ class JobImportService
                     [
                         'title' => Str::limit($item['title'], 250, ''),
                         'description' => $item['description'],
-                        'location' => Str::limit($item['location'] ?: 'غير محدد', 250, ''),
-                        'salary' => $item['salary'] ?: 'غير محدد',
+                        'location' => Str::limit($item['location'] ?: 'Not specified', 250, ''),
+                        'salary'   => $item['salary'] ?: 'Not specified',
                         'type' => $item['type'],
                         'jobCategoryId' => $defaultCategory->id,
                         'companyId' => $company->id,

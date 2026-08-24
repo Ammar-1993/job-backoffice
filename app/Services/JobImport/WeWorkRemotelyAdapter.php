@@ -52,7 +52,7 @@ class WeWorkRemotelyAdapter implements JobSourceAdapter
                         'description' => $description !== '' ? $description : $jobTitle,
                         'location' => $this->extractLocation($descriptionHtml) ?? 'Remote',
                         'type' => 'Remote', // every WWR listing is remote by definition
-                        'salary' => 'غير محدد', // not exposed in the feed
+                        'salary'   => 'Not specified', // not exposed in the feed
                         'company_name' => $companyName,
                         'source_platform' => 'weworkremotely',
                         'source_url' => $link,
@@ -79,7 +79,7 @@ class WeWorkRemotelyAdapter implements JobSourceAdapter
             return [trim($company), trim($title)];
         }
 
-        return ['غير معروف', $rawTitle];
+        return ['Unknown Company', $rawTitle];
     }
 
     private function extractLocation(string $descriptionHtml): ?string

@@ -41,14 +41,14 @@ class GreenhouseAdapter implements JobSourceAdapter
                         ? trim(strip_tags($job['content']))
                         : $title;
 
-                    $location = $job['location']['name'] ?? 'غير محدد';
+                    $location = $job['location']['name'] ?? 'Not specified';
 
                     $results[] = [
                         'title' => $title,
                         'description' => $description !== '' ? $description : $title,
                         'location' => $location,
                         'type' => $this->detectType($title, $location),
-                        'salary' => 'غير محدد', // Greenhouse's public board API doesn't expose pay data on most boards
+                        'salary'   => 'Not specified', // Greenhouse's public board API doesn't expose pay data on most boards
                         'company_name' => $companyName ?: $boardToken,
                         'source_platform' => 'greenhouse',
                         'source_url' => $job['absolute_url'] ?? null,

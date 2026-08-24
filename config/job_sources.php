@@ -40,5 +40,5 @@ return [
     // Fallback JobCategory name used for every imported vacancy, since
     // job_vacancies.jobCategoryId is a required FK and external sources
     // don't map cleanly onto your existing categories.
-    'default_job_category' => 'استيراد خارجي',
+    'default_job_category' => 'External Import',
 ];
