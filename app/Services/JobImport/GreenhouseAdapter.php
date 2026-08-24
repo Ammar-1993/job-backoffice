@@ -38,21 +38,21 @@ class GreenhouseAdapter implements JobSourceAdapter
                     }
 
                     $description = isset($job['content'])
-                        ? trim(strip_tags($job['content']))
+                        ? $this->htmlToPlainText($job['content'])
                         : $title;
 
                     $location = $job['location']['name'] ?? 'Not specified';
 
                     $results[] = [
-                        'title' => $title,
-                        'description' => $description !== '' ? $description : $title,
-                        'location' => $location,
-                        'type' => $this->detectType($title, $location),
-                        'salary'   => 'Not specified', // Greenhouse's public board API doesn't expose pay data on most boards
-                        'company_name' => $companyName ?: $boardToken,
+                        'title'           => $title,
+                        'description'     => $description !== '' ? $description : $title,
+                        'location'        => $location,
+                        'type'            => $this->detectType($title, $location),
+                        'salary'          => 'Not specified', // Greenhouse's public board API doesn't expose pay data on most boards
+                        'company_name'    => $companyName ?: $boardToken,
                         'source_platform' => 'greenhouse',
-                        'source_url' => $job['absolute_url'] ?? null,
-                        'external_id' => isset($job['id']) ? (string) $job['id'] : null,
+                        'source_url'      => $job['absolute_url'] ?? null,
+                        'external_id'     => isset($job['id']) ? (string) $job['id'] : null,
                     ];
                 }
             } catch (\Throwable $e) {
@@ -71,10 +71,48 @@ class GreenhouseAdapter implements JobSourceAdapter
         $haystack = Str::lower($title.' '.$location);
 
         return match (true) {
-            Str::contains($haystack, ['hybrid']) => 'Hybrid',
-            Str::contains($haystack, ['remote', 'anywhere']) => 'Remote',
+            Str::contains($haystack, ['hybrid'])                              => 'Hybrid',
+            Str::contains($haystack, ['remote', 'anywhere'])                 => 'Remote',
             Str::contains($haystack, ['contract', 'contractor', 'freelance']) => 'Contract',
-            default => 'Full-Time',
+            default                                                           => 'Full-Time',
         };
+    }
+
+    /**
+     * Convert HTML job description to clean, readable plain text.
+     *
+     * Strategy:
+     *   1. Inject newlines before/after block-level elements so structure is preserved.
+     *   2. Prefix <li> items with a bullet character.
+     *   3. Strip all remaining HTML tags.
+     *   4. Decode HTML entities (&amp; &nbsp; &lt; etc.).
+     *   5. Normalise whitespace (collapse blank lines, trim each line).
+     */
+    private function htmlToPlainText(string $html): string
+    {
+        // Decode HTML entities FIRST because Greenhouse returns escaped HTML (e.g. &lt;p&gt;)
+        $html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // Inject newlines before opening block-level tags
+        $html = preg_replace('/<(h[1-6]|p|div|br|hr|section|article)[^>]*>/i', "\n", $html);
+        // Inject newlines after closing block-level tags
+        $html = preg_replace('/<\/(h[1-6]|p|div|section|article)>/i', "\n", $html);
+        // Bullet-point list items
+        $html = preg_replace('/<li[^>]*>/i', "\n• ", $html);
+
+        // Strip remaining HTML tags
+        $text = strip_tags($html);
+
+        // Decode HTML entities AGAIN in case of double-encoding or regular text entities
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // Collapse 3+ consecutive newlines → 2 (preserve paragraph breaks)
+        $text = preg_replace("/\n{3,}/", "\n\n", $text);
+
+        // Trim whitespace from each line individually
+        $lines = array_map('trim', explode("\n", $text));
+        $text  = implode("\n", $lines);
+
+        return trim($text);
     }
 }
