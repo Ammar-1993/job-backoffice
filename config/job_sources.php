@@ -10,8 +10,17 @@ return [
      */
     // Map: board token => the company display name you want stored/shown.
     'greenhouse_boards' => [
-        // 'stripe' => 'Stripe',
-        // 'notion' => 'Notion',
+        // شركات تقنية كبرى تستخدم Greenhouse بلوحات عامة (لا تتطلب مصادقة)
+        'gitlab'      => 'GitLab',
+        'notion'      => 'Notion',
+        'figma'       => 'Figma',
+        'linear'      => 'Linear',
+        'retool'      => 'Retool',
+        'sourcegraph' => 'Sourcegraph',
+        'gusto'       => 'Gusto',
+        'intercom'    => 'Intercom',
+        'loom'        => 'Loom',
+        'zapier'      => 'Zapier',
     ],
 
     /**
