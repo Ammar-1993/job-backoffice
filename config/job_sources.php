@@ -10,17 +10,34 @@ return [
      */
     // Map: board token => the company display name you want stored/shown.
     'greenhouse_boards' => [
-        // ── Verified GCC Tech Leaders & Unicorns (100% Real GCC Jobs) 🇸🇦 🇦🇪 ──
-        'tamara'      => 'Tamara',        // 21 jobs in Riyadh (Saudi FinTech Unicorn)
-        'careem'      => 'Careem',        // 11 jobs in Dubai (Ride-hailing & Super App)
-        'deliveroo'   => 'Deliveroo',     // 16 jobs in Dubai, Kuwait, Qatar
-        'bybit'       => 'Bybit',         // 56 jobs in Dubai (FinTech / Crypto)
-        'okx'         => 'OKX',           // 7 jobs in Dubai
-        'monks'       => 'Monks',         // 6 jobs in Riyadh & Dubai (Tech Agency)
-        'minio'       => 'MinIO',         // 3 jobs in Riyadh (Storage Tech)
-        'nebius'      => 'Nebius',        // 3 jobs in Dubai & Abu Dhabi (AI Cloud)
-        'stripe'      => 'Stripe',        // 3 jobs in Dubai & Riyadh (Payments)
-        'braze'       => 'Braze',         // 1 job in Dubai (Customer Engagement)
+        // ── 🇸🇦 Saudi Arabia Tech & FinTech Leaders ──────────────────────────
+        'tamara'             => 'Tamara',             // Saudi FinTech Unicorn (Riyadh) - BNPL & Consumer Finance
+        'hala'               => 'HALA',               // Saudi FinTech Unicorn (Riyadh) - SME Banking & POS Systems
+        'minio'              => 'MinIO',              // High-Performance Object Storage (Riyadh & Remote)
+        'beyondtrust'        => 'BeyondTrust',        // Enterprise Cybersecurity (Riyadh & GCC)
+        'monks'              => 'Monks',              // Media.Monks (Riyadh & Dubai) - Digital Product & Tech Agency
+
+        // ── 🇦🇪 UAE & GCC Regional Tech Giants & Unicorns ────────────────────
+        'careem'             => 'Careem',             // Ride-Hailing, Delivery & FinTech Super App (Dubai & Riyadh)
+        'deliveroo'          => 'Deliveroo',          // Food & Quick-Commerce Tech (Dubai, Kuwait, Qatar)
+        'bybit'              => 'Bybit',              // Global Crypto & FinTech HQ (Dubai)
+        'okx'                => 'OKX',                // Global Crypto & Trading HQ (Dubai)
+        'nebius'             => 'Nebius',             // AI Cloud Infrastructure & High-Performance Compute (Abu Dhabi & Dubai)
+        'stripe'             => 'Stripe',             // Global Payment Infrastructure (Dubai & Riyadh)
+        'braze'              => 'Braze',              // Customer Engagement & Lifecycle Tech (Dubai)
+        'squarepointcapital' => 'Squarepoint Capital',// Algorithmic Trading & Financial Engineering (Dubai)
+        'fireblocks'         => 'Fireblocks',         // Digital Asset Security & Cloud Infra (Dubai)
+        'ripple'             => 'Ripple',             // Cross-Border Payments & Blockchain Tech (Dubai)
+        'bigid'              => 'BigID',              // Data Security & AI Governance (Dubai)
+
+        // ── 🌍 Global Tech Innovators (GCC Hubs & Remote-Eligible) ──────────
+        'canonical'          => 'Canonical',          // Ubuntu & Cloud Infrastructure (Dubai & Worldwide Remote)
+        'elastic'            => 'Elastic',            // Elasticsearch & Search AI Platform (Dubai & Worldwide Remote)
+        'datadog'            => 'Datadog',            // Cloud Observability & Security (Dubai & Worldwide Remote)
+        'cloudflare'         => 'Cloudflare',         // Web Performance & Cloud Security (Dubai & Worldwide Remote)
+        'gitlab'             => 'GitLab',             // DevSecOps & AI Platform (100% Worldwide Remote)
+        'coinbase'           => 'Coinbase',           // Web3 & Crypto Engineering (UAE & Worldwide Remote)
+        'consensys'          => 'Consensys',          // Ethereum & Web3 Infrastructure (Dubai & Worldwide Remote)
     ],
 
     /**
