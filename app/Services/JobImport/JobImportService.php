@@ -59,6 +59,18 @@ class JobImportService
                     continue;
                 }
 
+                // 1. Technical Role & Location/Visa Eligibility Pre-filter
+                $eligibility = \App\Support\JobFilter::isEligible(
+                    $item['title'],
+                    $item['description'] ?? '',
+                    $item['location'] ?? ''
+                );
+
+                if (! $eligibility['eligible']) {
+                    $stats['skipped']++;
+                    continue;
+                }
+
                 // Strict Pre-filter: if minMatch is requested, verify the job matches at least 1 candidate skill
                 if ($minMatch > 0 && !empty($candidateSkills)) {
                     $quickSkillMatch = \App\Support\SkillMatcher::matchSkills($candidateSkills, $item['title'], $item['description']);
