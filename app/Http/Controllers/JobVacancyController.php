@@ -86,7 +86,7 @@ class JobVacancyController extends Controller
         $validated = $request->validated();
         
         try {
-            $textToEmbed = json_encode([
+            $textToEmbed = \App\Support\EmbeddingText::forJob([
                 'title' => $validated['title'] ?? '',
                 'description' => $validated['description'] ?? '',
                 'location' => $validated['location'] ?? '',
@@ -135,7 +135,7 @@ class JobVacancyController extends Controller
         $jobVacancy = JobVacancy::findOrFail($id);
         
         try {
-            $textToEmbed = json_encode([
+            $textToEmbed = \App\Support\EmbeddingText::forJob([
                 'title' => $validated['title'] ?? $jobVacancy->title,
                 'description' => $validated['description'] ?? $jobVacancy->description,
                 'location' => $validated['location'] ?? $jobVacancy->location,

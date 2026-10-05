@@ -45,12 +45,19 @@ class WeWorkRemotelyAdapter implements JobSourceAdapter
 
                     [$companyName, $jobTitle] = $this->splitTitle($rawTitle);
                     $descriptionHtml = (string) $item->description;
+                    $location = $this->extractLocation($descriptionHtml) ?? 'Remote';
+
+                    // ── GCC & Worldwide targeting: skip regional restrictions like "USA Only" ──
+                    if (! $this->isGccOrWorldwide($location)) {
+                        continue;
+                    }
+
                     $description = trim(strip_tags($descriptionHtml));
 
                     $results[] = [
                         'title' => $jobTitle,
                         'description' => $description !== '' ? $description : $jobTitle,
-                        'location' => $this->extractLocation($descriptionHtml) ?? 'Remote',
+                        'location' => $location,
                         'type' => 'Remote', // every WWR listing is remote by definition
                         'salary'   => 'Not specified', // not exposed in the feed
                         'company_name' => $companyName,
@@ -89,5 +96,41 @@ class WeWorkRemotelyAdapter implements JobSourceAdapter
         }
 
         return null;
+    }
+
+    private function isGccOrWorldwide(?string $loc): bool
+    {
+        if ($loc === null || trim($loc) === '' || strtolower(trim($loc)) === 'remote') {
+            return true; // unrestricted remote
+        }
+
+        $locLower = Str::lower($loc);
+
+        // Worldwide & GCC keywords
+        $allowed = [
+            'anywhere', 'worldwide', 'global', 'international',
+            'middle east', 'mena', 'gulf', 'gcc',
+            'saudi', 'riyadh', 'jeddah', 'uae', 'dubai', 'abu dhabi',
+            'kuwait', 'qatar', 'bahrain', 'oman',
+        ];
+        foreach ($allowed as $kw) {
+            if (str_contains($locLower, $kw)) {
+                return true;
+            }
+        }
+
+        // Exclude US/EU only restrictions
+        $excluded = [
+            'usa only', 'us only', 'united states only',
+            'europe only', 'eu only', 'uk only', 'canada only',
+            'latam only', 'americas only', 'australia only',
+        ];
+        foreach ($excluded as $kw) {
+            if (str_contains($locLower, $kw)) {
+                return false;
+            }
+        }
+
+        return false;
     }
 }

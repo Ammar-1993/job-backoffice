@@ -23,6 +23,10 @@ class JobApplicationUpdateRequest extends FormRequest
     {
         return [
             'status' => 'bail|required|string|in:pending,accepted,rejected',
+            'hunter_status' => 'nullable|string',
+            'follow_up_at' => 'nullable|date',
+            'applied_channel' => 'nullable|string|max:100',
+            'new_note' => 'nullable|string|max:1000',
         ];
     }
 

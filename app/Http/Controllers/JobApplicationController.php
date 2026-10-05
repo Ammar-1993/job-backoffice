@@ -43,6 +43,19 @@ class JobApplicationController extends Controller
             $query->where('status', $request->status);
         }
 
+        // 3b. Job Hunter Mode Filter Logic
+        if ($request->filled('type')) {
+            if ($request->type === 'personal') {
+                $query->personal();
+            } elseif ($request->type === 'client') {
+                $query->clientApplications();
+            }
+        }
+
+        if ($request->filled('hunter_status')) {
+            $query->hunterStatus($request->hunter_status);
+        }
+
         // 4. Archived Check
         if ($request->input('archived') == 'true') {
             $query->onlyTrashed();
@@ -62,7 +75,7 @@ class JobApplicationController extends Controller
      */
     public function show(string $id)
     {
-        $jobApplication = JobApplication::with(['user', 'jobVacancy.company'])->findOrFail($id);
+        $jobApplication = JobApplication::with(['user', 'jobVacancy.company', 'resume'])->findOrFail($id);
         return view('job-application.show', compact('jobApplication'));
     }
 
@@ -71,7 +84,7 @@ class JobApplicationController extends Controller
      */
     public function edit(string $id)
     {
-        $jobApplication = JobApplication::findOrFail($id);
+        $jobApplication = JobApplication::with(['user', 'jobVacancy.company', 'resume'])->findOrFail($id);
         return view('job-application.edit', compact('jobApplication'));
     }
 
@@ -81,9 +94,22 @@ class JobApplicationController extends Controller
     public function update(JobApplicationUpdateRequest $request, string $id)
     {
         $jobApplication = JobApplication::findOrFail($id);
-        $jobApplication->update([
-            'status' => \App\Enums\ApplicationStatus::from($request->input('status')),
-        ]);
+        $jobApplication->status = \App\Enums\ApplicationStatus::from($request->input('status'));
+
+        if ($request->filled('hunter_status')) {
+            $jobApplication->hunter_status = $request->input('hunter_status');
+        }
+        if ($request->has('follow_up_at')) {
+            $jobApplication->follow_up_at = $request->input('follow_up_at') ?: null;
+        }
+        if ($request->has('applied_channel')) {
+            $jobApplication->applied_channel = $request->input('applied_channel') ?: null;
+        }
+        if ($request->filled('new_note')) {
+            $jobApplication->appendNotes($request->input('new_note'));
+        }
+
+        $jobApplication->save();
 
         if($request->query('redirectToList') == 'false'){
             return redirect()->route('job-applications.show', $id)->with('success', 'Applicant status updated successfully!');

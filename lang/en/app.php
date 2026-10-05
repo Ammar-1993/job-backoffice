@@ -173,6 +173,7 @@ return [
         'status_pending' => 'Pending',
         'status_accepted' => 'Accepted',
         'status_rejected' => 'Rejected',
+        'no_feedback_yet' => 'No analysis feedback available yet.',
     ],
     'job_types' => [
         'full_time' => 'Full-Time',

@@ -70,6 +70,94 @@
                     </div>
                 </div>
 
+                @if($jobApplication->isHunter())
+                <!-- Job Hunter Mode Management -->
+                <div class="mb-8 p-6 bg-gradient-to-br from-purple-50/70 to-indigo-50/40 border border-purple-100 rounded-2xl shadow-sm">
+                    <div class="flex items-center mb-6 pb-4 border-b border-purple-100">
+                        <div class="p-2.5 bg-purple-600 text-white rounded-xl mr-3 shadow-md shadow-purple-500/20">
+                            <span class="text-xl">🎯</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-gray-900">Job Hunter Pipeline & Follow-up</h3>
+                            <p class="text-sm text-gray-500 font-medium">Manage your personal application stage, channel, and follow-up timeline.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <!-- Hunter Stage -->
+                        <div>
+                            <label for="hunter_status" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                                Hunter Stage / Status
+                            </label>
+                            <select name="hunter_status" id="hunter_status"
+                                class="block w-full rounded-xl shadow-sm border-gray-200 focus:border-purple-500 focus:ring-purple-500 sm:text-sm font-semibold text-gray-700 bg-white">
+                                @foreach(\App\Enums\HunterApplicationStatus::cases() as $stage)
+                                    <option value="{{ $stage->value }}" {{ old('hunter_status', $jobApplication->hunter_status?->value) === $stage->value ? 'selected' : '' }}>
+                                        {{ $stage->label() }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Channel -->
+                        <div>
+                            <label for="applied_channel" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                                Applied Channel
+                            </label>
+                            <input type="text" name="applied_channel" id="applied_channel" list="channel-suggestions"
+                                value="{{ old('applied_channel', $jobApplication->applied_channel) }}"
+                                placeholder="e.g. LinkedIn, Company Website"
+                                class="block w-full rounded-xl shadow-sm border-gray-200 focus:border-purple-500 focus:ring-purple-500 sm:text-sm font-medium text-gray-700 bg-white">
+                            <datalist id="channel-suggestions">
+                                <option value="LinkedIn">
+                                <option value="Company Website">
+                                <option value="Greenhouse">
+                                <option value="WeWorkRemotely">
+                                <option value="Wellfound">
+                                <option value="Referral">
+                                <option value="Direct Email">
+                            </datalist>
+                        </div>
+
+                        <!-- Follow Up Date -->
+                        <div>
+                            <label for="follow_up_at" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                                Next Follow-up Date
+                            </label>
+                            <input type="date" name="follow_up_at" id="follow_up_at"
+                                value="{{ old('follow_up_at', $jobApplication->follow_up_at?->format('Y-m-d')) }}"
+                                class="block w-full rounded-xl shadow-sm border-gray-200 focus:border-purple-500 focus:ring-purple-500 sm:text-sm font-medium text-gray-700 bg-white">
+                        </div>
+                    </div>
+
+                    <!-- Append New Note -->
+                    <div class="mb-4">
+                        <label for="new_note" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                            Append New Note / Interview Log
+                        </label>
+                        <textarea name="new_note" id="new_note" rows="2"
+                            placeholder="Add a new update or follow-up note (e.g. 'Sent follow-up message to recruiter via LinkedIn')..."
+                            class="block w-full rounded-xl shadow-sm border-gray-200 focus:border-purple-500 focus:ring-purple-500 sm:text-sm font-medium text-gray-700 bg-white"></textarea>
+                    </div>
+
+                    @if(!empty($jobApplication->notes))
+                    <!-- Existing Notes History -->
+                    <div class="mt-4 pt-4 border-t border-purple-100">
+                        <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Notes & Follow-up History</h5>
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                            @foreach(explode("\n", $jobApplication->notes) as $noteLine)
+                                @if(trim($noteLine))
+                                    <div class="bg-white/90 p-3 rounded-lg border border-purple-100/80 text-xs text-gray-700 font-mono shadow-2xs" dir="auto">
+                                        {{ $noteLine }}
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
+
                 <!-- Update Status Section -->
                 <div class="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <h4 class="text-lg font-bold text-gray-800 mb-4">{{ __('app.applications.status') }}</h4>

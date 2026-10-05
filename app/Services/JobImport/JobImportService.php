@@ -29,7 +29,7 @@ class JobImportService
      *                    while testing, not to throttle the HTTP fetch step.
      * @return array{fetched:int,created:int,updated:int,skipped:int,failed:int,limited:bool}
      */
-    public function run(int $limit = 0): array
+    public function run(int $limit = 0, int $minMatch = 0, ?array $candidateSkills = null, ?array $resumeEmbedding = null): array
     {
         $stats = ['fetched' => 0, 'created' => 0, 'updated' => 0, 'skipped' => 0, 'failed' => 0, 'limited' => false];
 
@@ -59,6 +59,15 @@ class JobImportService
                     continue;
                 }
 
+                // Strict Pre-filter: if minMatch is requested, verify the job matches at least 1 candidate skill
+                if ($minMatch > 0 && !empty($candidateSkills)) {
+                    $quickSkillMatch = \App\Support\SkillMatcher::matchSkills($candidateSkills, $item['title'], $item['description']);
+                    if ($quickSkillMatch['match_count'] === 0) {
+                        $stats['skipped']++;
+                        continue;
+                    }
+                }
+
                 $company = Company::firstOrCreate(
                     ['name' => $item['company_name'] ?: 'Unknown Company'],
                     [
@@ -68,26 +77,52 @@ class JobImportService
                     ]
                 );
 
-                $isNew = ! JobVacancy::where('source_url', $item['source_url'])->exists();
+                $job = JobVacancy::withTrashed()->where('source_url', $item['source_url'])->first();
+                $isNew = ($job === null);
 
-                // updateOrCreate triggers JobVacancyObserver on create/update,
-                // so the vector_embedding is generated automatically — no
-                // extra step needed here.
-                JobVacancy::updateOrCreate(
-                    ['source_url' => $item['source_url']],
-                    [
-                        'title' => Str::limit($item['title'], 250, ''),
-                        'description' => $item['description'],
-                        'location' => Str::limit($item['location'] ?: 'Not specified', 250, ''),
-                        'salary'   => $item['salary'] ?: 'Not specified',
-                        'type' => $item['type'],
-                        'jobCategoryId' => $defaultCategory->id,
-                        'companyId' => $company->id,
-                        'source_platform' => $item['source_platform'],
-                        'external_id' => $item['external_id'] ?? null,
-                        'imported_at' => now(),
-                    ]
-                );
+                $data = [
+                    'title'           => Str::limit($item['title'], 250, ''),
+                    'description'     => $item['description'],
+                    'location'        => Str::limit($item['location'] ?: 'Not specified', 250, ''),
+                    'salary'          => $item['salary'] ?: 'Not specified',
+                    'type'            => $item['type'],
+                    'jobCategoryId'   => $defaultCategory->id,
+                    'companyId'       => $company->id,
+                    'source_platform' => $item['source_platform'],
+                    'external_id'     => $item['external_id'] ?? null,
+                    'imported_at'     => now(),
+                ];
+
+                if ($job) {
+                    if ($job->trashed()) {
+                        $job->restore();
+                    }
+                    $job->update($data);
+                } else {
+                    $job = JobVacancy::create(array_merge(['source_url' => $item['source_url']], $data));
+                }
+
+                // Post-import verification: check full hybrid score against candidate resume
+                if ($minMatch > 0 && !empty($candidateSkills)) {
+                    $jobEmbedding = $job->vector_embedding ? json_decode($job->vector_embedding, true) : null;
+                    $hybrid = \App\Support\SkillMatcher::computeHybridScore(
+                        $resumeEmbedding,
+                        $jobEmbedding,
+                        $candidateSkills,
+                        $job->title ?? '',
+                        $job->description ?? ''
+                    );
+
+                    if ($hybrid['composite_score'] < $minMatch) {
+                        if ($job->jobApplications()->exists()) {
+                            $job->delete();
+                        } else {
+                            $job->forceDelete();
+                        }
+                        $stats['skipped']++;
+                        continue;
+                    }
+                }
 
                 $isNew ? $stats['created']++ : $stats['updated']++;
             } catch (\Throwable $e) {

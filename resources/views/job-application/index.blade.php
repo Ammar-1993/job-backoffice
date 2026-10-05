@@ -35,11 +35,23 @@
                         
                         <!-- Status Filter -->
                         <div class="relative">
-                            <select name="status" onchange="this.form.submit()" class="appearance-none pl-4 pr-10 py-2.5 rounded-xl border-gray-200 bg-gray-50 hover:bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-gray-700 font-medium transition-colors cursor-pointer w-full sm:w-48">
+                            <select name="status" onchange="this.form.submit()" class="appearance-none pl-4 pr-10 py-2.5 rounded-xl border-gray-200 bg-gray-50 hover:bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-gray-700 font-medium transition-colors cursor-pointer w-full sm:w-44">
                                 <option value="">{{ __('app.common.all_statuses') }}</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('app.applications.status_pending') }}</option>
                                 <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>{{ __('app.applications.status_accepted') }}</option>
                                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>{{ __('app.applications.status_rejected') }}</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+
+                        <!-- Type Filter (Job Hunter Mode) -->
+                        <div class="relative">
+                            <select name="type" onchange="this.form.submit()" class="appearance-none pl-4 pr-10 py-2.5 rounded-xl border-gray-200 bg-gray-50 hover:bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-gray-700 font-medium transition-colors cursor-pointer w-full sm:w-44">
+                                <option value="">All Applications</option>
+                                <option value="client" {{ request('type') == 'client' ? 'selected' : '' }}>Client Apps</option>
+                                <option value="personal" {{ request('type') == 'personal' ? 'selected' : '' }}>Job Hunter (Personal)</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -82,13 +94,21 @@
                                                     {{ strtoupper(substr($applicant->name, 0, 1)) }}
                                                 </div>
                                                 <div>
-                                                    @if(request('archived') != 'true')
-                                                        <a href="{{ route('job-applications.show', $jobApplication->id) }}" class="text-sm font-bold text-gray-900 hover:text-indigo-600 transition-colors">
-                                                            {{ $applicant->name }}
-                                                        </a>
-                                                    @else
-                                                        <span class="text-sm font-bold text-gray-900">{{ $applicant->name }}</span>
-                                                    @endif
+                                                    <div class="flex items-center">
+                                                        @if(request('archived') != 'true')
+                                                            <a href="{{ route('job-applications.show', $jobApplication->id) }}" class="text-sm font-bold text-gray-900 hover:text-indigo-600 transition-colors">
+                                                                {{ $applicant->name }}
+                                                            </a>
+                                                        @else
+                                                            <span class="text-sm font-bold text-gray-900">{{ $applicant->name }}</span>
+                                                        @endif
+
+                                                        @if($jobApplication->isHunter())
+                                                            <span class="inline-flex items-center px-2 py-0.5 ml-2 rounded-md text-[10px] font-extrabold bg-purple-100 text-purple-700 border border-purple-200 uppercase tracking-wider shadow-sm">
+                                                                🎯 Hunter
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                     <div class="text-xs text-gray-500 mt-0.5 flex items-center font-medium">
                                                         <svg class="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                                         {{ $applicant->email }}
@@ -122,6 +142,13 @@
                                             <svg class="w-4 h-4 mr-1.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $style['icon'] }}"></path></svg>
                                             {{ __('app.applications.status_' . $statusValue) }}
                                         </span>
+                                        @if($jobApplication->hunter_status)
+                                            <div class="mt-1.5">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border {{ $jobApplication->hunter_status->badgeClasses() }}">
+                                                    {{ $jobApplication->hunter_status->label() }}
+                                                </span>
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end items-center space-x-2">

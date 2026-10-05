@@ -65,9 +65,26 @@
                                 ];
                                 $style = $statusStyles[$statusValue] ?? 'bg-gray-100 text-gray-800 border-gray-200';
                             @endphp
-                            <span class="px-3 py-1.5 rounded-lg text-sm font-bold border {{ $style }}">
-                                {{ __('app.applications.status_' . $statusValue) }}
-                            </span>
+
+                            @if($jobApplication->isHunter())
+                                <span class="px-3 py-1.5 rounded-lg text-sm font-black bg-purple-100 text-purple-800 border border-purple-200 shadow-sm">
+                                    🎯 Job Hunter
+                                </span>
+                                @if($jobApplication->hunter_status)
+                                    <span class="px-3 py-1.5 rounded-lg text-sm font-bold border {{ $jobApplication->hunter_status->badgeClasses() }}">
+                                        {{ $jobApplication->hunter_status->label() }}
+                                    </span>
+                                @endif
+                                @if($jobApplication->applied_channel)
+                                    <span class="text-sm font-medium text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                        Channel: {{ ucfirst($jobApplication->applied_channel) }}
+                                    </span>
+                                @endif
+                            @else
+                                <span class="px-3 py-1.5 rounded-lg text-sm font-bold border {{ $style }}">
+                                    {{ __('app.applications.status_' . $statusValue) }}
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -92,29 +109,47 @@
             </div>
         </div>
 
+        @php
+            $defaultTab = ($jobApplication->isHunter() || $jobApplication->tailored_cover_letter) ? 'hunter' : 'resume';
+            $activeTab = request('tab', $defaultTab);
+        @endphp
+
         <!-- Content Area -->
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
             <!-- Tabs Navigation -->
             <div class="border-b border-gray-100">
                 <nav class="flex px-6 space-x-8" aria-label="Tabs">
+                    @if($jobApplication->isHunter() || $jobApplication->tailored_cover_letter)
+                        <a href="{{ route('job-applications.show', ['job_application' => $jobApplication->id, 'tab' => 'hunter']) }}"
+                            class="group relative py-4 px-2 font-bold text-sm transition-colors duration-300 {{ $activeTab == 'hunter' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                            <span class="flex items-center">
+                                <svg class="w-5 h-5 mr-2 {{ $activeTab == 'hunter' ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                🎯 Job Hunter Materials
+                            </span>
+                            @if($activeTab == 'hunter')
+                                <span class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></span>
+                            @endif
+                        </a>
+                    @endif
+
                     <a href="{{ route('job-applications.show', ['job_application' => $jobApplication->id, 'tab' => 'resume']) }}"
-                        class="group relative py-4 px-2 font-bold text-sm transition-colors duration-300 {{ request('tab') == 'resume' || request('tab') == '' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                        class="group relative py-4 px-2 font-bold text-sm transition-colors duration-300 {{ $activeTab == 'resume' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
                         <span class="flex items-center">
-                            <svg class="w-5 h-5 mr-2 {{ request('tab') == 'resume' || request('tab') == '' ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <svg class="w-5 h-5 mr-2 {{ $activeTab == 'resume' ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             {{ __('app.applications.resume_tab') }}
                         </span>
-                        @if(request('tab') == 'resume' || request('tab') == '')
+                        @if($activeTab == 'resume')
                             <span class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></span>
                         @endif
                     </a>
                     
                     <a href="{{ route('job-applications.show', ['job_application' => $jobApplication->id, 'tab' => 'AIFeedback']) }}"
-                        class="group relative py-4 px-2 font-bold text-sm transition-colors duration-300 {{ request('tab') == 'AIFeedback' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                        class="group relative py-4 px-2 font-bold text-sm transition-colors duration-300 {{ $activeTab == 'AIFeedback' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
                         <span class="flex items-center">
-                            <svg class="w-5 h-5 mr-2 {{ request('tab') == 'AIFeedback' ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                            <svg class="w-5 h-5 mr-2 {{ $activeTab == 'AIFeedback' ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                             {{ __('app.applications.ai_feedback_tab') }}
                         </span>
-                        @if(request('tab') == 'AIFeedback')
+                        @if($activeTab == 'AIFeedback')
                             <span class="absolute bottom-0 left-0 w-full h-1 bg-indigo-600 rounded-t-full"></span>
                         @endif
                     </a>
@@ -124,7 +159,7 @@
             <!-- Tab Content -->
             <div class="p-8">
                 <!-- Resume Tab -->
-                <div id="resume" class="{{ request('tab') == 'resume' || request('tab') == '' ? 'block space-y-8' : 'hidden' }}">
+                <div id="resume" class="{{ $activeTab == 'resume' ? 'block space-y-8' : 'hidden' }}">
                     
                     <!-- Original File Download (if any) -->
                     @if($jobApplication->resume && $jobApplication->resume->fileUri)
@@ -237,7 +272,7 @@
                 </div>
 
                 <!-- AI Feedback Tab -->
-                <div id="AIFeedback" class="{{ request('tab') == 'AIFeedback' ? 'block space-y-6' : 'hidden' }}">
+                <div id="AIFeedback" class="{{ $activeTab == 'AIFeedback' ? 'block space-y-6' : 'hidden' }}">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <!-- Score Card -->
                         <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center relative overflow-hidden h-full">
@@ -259,6 +294,103 @@
                         </div>
                     </div>
                 </div>
+
+                @if($jobApplication->isHunter() || $jobApplication->tailored_cover_letter)
+                    <!-- Job Hunter Materials Tab -->
+                    <div id="hunter" class="{{ $activeTab == 'hunter' ? 'block space-y-6' : 'hidden' }}">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Left Column: Status, Channel, Follow-up & Selling Points -->
+                            <div class="space-y-6">
+                                <!-- Stage Card -->
+                                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-2xl border border-indigo-100 shadow-sm">
+                                    <h4 class="text-xs font-black uppercase tracking-wider text-indigo-700 mb-3 flex items-center">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Hunter Stage & Details
+                                    </h4>
+                                    <div class="space-y-3 text-sm">
+                                        <div class="flex justify-between items-center py-1 border-b border-indigo-100/50">
+                                            <span class="text-gray-500 font-medium">Current Stage:</span>
+                                            <span class="font-bold px-2.5 py-0.5 rounded-full text-xs border {{ $jobApplication->hunter_status ? $jobApplication->hunter_status->badgeClasses() : 'bg-gray-100 text-gray-800' }}">
+                                                {{ $jobApplication->hunter_status ? $jobApplication->hunter_status->label() : 'Draft' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-1 border-b border-indigo-100/50">
+                                            <span class="text-gray-500 font-medium">Channel:</span>
+                                            <span class="font-semibold text-gray-900">{{ ucfirst($jobApplication->applied_channel ?? 'Direct') }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-1 border-b border-indigo-100/50">
+                                            <span class="text-gray-500 font-medium">Applied At:</span>
+                                            <span class="font-semibold text-gray-900">{{ $jobApplication->applied_at ? $jobApplication->applied_at->format('Y-m-d H:i') : 'Not yet' }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-1">
+                                            <span class="text-gray-500 font-medium">Follow-up Reminder:</span>
+                                            <span class="font-bold text-indigo-600">{{ $jobApplication->follow_up_at ? $jobApplication->follow_up_at->format('Y-m-d') : 'None set' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Key Selling Points -->
+                                @if($jobApplication->tailored_key_points && is_array($jobApplication->tailored_key_points))
+                                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                        <h4 class="text-xs font-black uppercase tracking-wider text-indigo-600 mb-3 flex items-center">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            Key Selling Points (AI Pitch)
+                                        </h4>
+                                        <ul class="space-y-2">
+                                            @foreach($jobApplication->tailored_key_points as $point)
+                                                <li class="text-xs text-gray-700 leading-relaxed flex items-start bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+                                                    <span class="text-indigo-600 mr-2 font-black">•</span>
+                                                    <span>{{ $point }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Right Column: Subject, Cover Letter & Notes Timeline -->
+                            <div class="lg:col-span-2 space-y-6">
+                                @if($jobApplication->suggested_subject_line)
+                                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                        <label class="block text-xs font-black uppercase tracking-wider text-indigo-500 mb-2">Suggested Email Subject</label>
+                                        <p class="text-sm font-bold text-gray-900 bg-gray-50 p-3 rounded-xl border border-gray-200 select-all font-mono">{{ $jobApplication->suggested_subject_line }}</p>
+                                    </div>
+                                @endif
+
+                                @if($jobApplication->tailored_cover_letter)
+                                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <label class="block text-xs font-black uppercase tracking-wider text-indigo-500">Tailored Cover Letter</label>
+                                            <span class="text-xs text-gray-400 font-medium">Generated for this application</span>
+                                        </div>
+                                        <div class="text-sm text-gray-800 bg-gray-50 p-5 rounded-xl border border-gray-200 whitespace-pre-line leading-relaxed select-all">
+                                            {{ $jobApplication->tailored_cover_letter }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Notes Timeline -->
+                                @if($jobApplication->notes)
+                                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                        <label class="block text-xs font-black uppercase tracking-wider text-amber-600 mb-3 flex items-center">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Interview & Progress Notes Timeline
+                                        </label>
+                                        <div class="space-y-2.5">
+                                            @foreach(explode("\n", $jobApplication->notes) as $noteLine)
+                                                @if(trim($noteLine))
+                                                    <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200/50 text-xs text-gray-800 leading-relaxed font-medium" dir="auto">
+                                                        {{ $noteLine }}
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

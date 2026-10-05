@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\JobVacancy;
+use App\Support\EmbeddingText;
 use Illuminate\Support\Facades\Log;
 use OpenAI\Laravel\Facades\OpenAI;
 
@@ -26,21 +27,21 @@ class JobVacancyObserver
         $contentChanged = $jobVacancy->wasChanged(['title', 'description', 'location', 'type']);
 
         if ($contentChanged || empty($jobVacancy->vector_embedding)) {
-            $this->ensureEmbedding($jobVacancy);
+            $this->ensureEmbedding($jobVacancy, force: $contentChanged);
         }
     }
 
     /**
      * Generate and persist a vector embedding for the given job vacancy.
      */
-    private function ensureEmbedding(JobVacancy $jobVacancy): void
+    private function ensureEmbedding(JobVacancy $jobVacancy, bool $force = false): void
     {
-        if (!empty($jobVacancy->vector_embedding) && strlen((string) $jobVacancy->vector_embedding) > 100) {
-            return; // Already has a valid embedding – skip.
+        if (!$force && !empty($jobVacancy->vector_embedding) && strlen((string) $jobVacancy->vector_embedding) > 100) {
+            return; // Already has a valid embedding and no force update requested – skip.
         }
 
         try {
-            $text = json_encode([
+            $text = EmbeddingText::forJob([
                 'title'       => $jobVacancy->title,
                 'description' => $jobVacancy->description,
                 'location'    => $jobVacancy->location,

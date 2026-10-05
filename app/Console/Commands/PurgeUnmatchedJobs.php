@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\JobVacancy;
+use App\Models\User;
+use App\Support\SkillMatcher;
+use Illuminate\Console\Command;
+
+class PurgeUnmatchedJobs extends Command
+{
+    protected $signature = 'jobs:purge-unmatched
+        {--min-score=80 : الحد الأدنى لنسبة التطابق لإبقاء الوظيفة (افتراضياً 80%)}
+        {--email=ammaralnggar@gmail.com : بريد المرشح المعتمد للمطابقة}
+        {--dry-run : تجربة وهمية فقط دون حذف فعلي}';
+
+    protected $description = 'يحذف الوظائف المستوردة غير المطابقة لسيرة المرشح بنسبة 80% فما فوق التي ليس عليها طلبات تقديم سابقة';
+
+    public function handle(): int
+    {
+        $minScore = (int) $this->option('min-score');
+        $email    = $this->option('email');
+        $dryRun   = (bool) $this->option('dry-run');
+
+        $user = User::where('email', $email)->first() ?? User::where('role', 'job_seeker')->first();
+        if (!$user) {
+            $this->error("المستخدم بالبريد {$email} غير موجود.");
+            return self::FAILURE;
+        }
+
+        $resume = $user->activeResume ?? $user->resumes()->latest()->first();
+        if (!$resume) {
+            $this->error("لا توجد سيرة ذاتية نشطة للمستخدم {$user->name}.");
+            return self::FAILURE;
+        }
+
+        $candidateSkills = $resume->skills ?? [];
+        $resumeEmbedding = $resume->vector_embedding ? json_decode($resume->vector_embedding, true) : null;
+
+        $this->info("المرشح: {$user->name} ({$user->email})");
+        $this->info("عدد المهارات المستخرجة: " . count($candidateSkills));
+        $this->info("عتبة الاستبعاد: أقل من {$minScore}%");
+        if ($dryRun) {
+            $this->warn("⚠ تشغيل تجريبي (Dry Run) — لن يتم حذف أي سجل فعلياً.");
+        }
+
+        // Only target external imported vacancies with NO personal applications attached
+        $vacancies = JobVacancy::whereNotNull('source_platform')
+            ->whereDoesntHave('jobApplications', fn($q) => $q->where('is_personal', true))
+            ->get();
+
+        $keptCount = 0;
+        $purgedCount = 0;
+
+        foreach ($vacancies as $job) {
+            $jobEmbedding = $job->vector_embedding ? json_decode($job->vector_embedding, true) : null;
+            $hybrid = SkillMatcher::computeHybridScore(
+                $resumeEmbedding,
+                $jobEmbedding,
+                $candidateSkills,
+                $job->title ?? '',
+                $job->description ?? ''
+            );
+
+            $score = $hybrid['composite_score'];
+
+            if ($score < $minScore) {
+                $purgedCount++;
+                if (!$dryRun) {
+                    $job->delete();
+                }
+            } else {
+                $keptCount++;
+            }
+        }
+
+        $this->table(
+            ['إجمالي الوظائف المفحوصة', "مطابقة (مُبقاة >= {$minScore}%)", "غير مطابقة (مُستبعدة < {$minScore}%)"],
+            [[$vacancies->count(), $keptCount, $purgedCount]]
+        );
+
+        if ($dryRun) {
+            $this->info("تمت المحاكاة: سيتم حذف {$purgedCount} وظيفة غير مطابقة عند التشغيل الفعلي.");
+        } else {
+            $this->info("✅ تم بنجاح حذف {$purgedCount} وظيفة غير مطابقة وتنظيف قاعدة البيانات لتبقى فقط وظائف الـ {$minScore}% فما فوق!");
+        }
+
+        return self::SUCCESS;
+    }
+}

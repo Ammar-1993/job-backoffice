@@ -43,6 +43,11 @@ class GreenhouseAdapter implements JobSourceAdapter
 
                     $location = $job['location']['name'] ?? 'Not specified';
 
+                    // ── GCC & Gulf Targeting: only keep GCC-based jobs or Worldwide remote ──
+                    if (! $this->isGccEligible($location, $title)) {
+                        continue;
+                    }
+
                     $results[] = [
                         'title'           => $title,
                         'description'     => $description !== '' ? $description : $title,
@@ -114,5 +119,57 @@ class GreenhouseAdapter implements JobSourceAdapter
         $text  = implode("\n", $lines);
 
         return trim($text);
+    }
+
+    /**
+     * Determine if a job location is in the GCC / Arab Gulf region or Worldwide remote.
+     *
+     * Filters for:
+     *  - Saudi Arabia 🇸🇦 (Riyadh, Jeddah, Dammam, Khobar, Dhahran, etc.)
+     *  - United Arab Emirates 🇦🇪 (Dubai, Abu Dhabi, Sharjah, etc.)
+     *  - Kuwait 🇰🇼, Qatar 🇶🇦, Bahrain 🇧🇭, Oman 🇴🇲
+     *  - Middle East / MENA / Gulf
+     *  - Explicit Worldwide / Global remote roles
+     */
+    public function isGccEligible(string $location, string $title = ''): bool
+    {
+        $haystack = Str::lower($location . ' ' . $title);
+
+        $gccKeywords = [
+            // Saudi Arabia 🇸🇦
+            'saudi', 'ksa', 'riyadh', 'jeddah', 'dammam', 'khobar', 'dhahran', 'jubail', 'makkah', 'mecca', 'medina', 'tabuk',
+            // United Arab Emirates 🇦🇪
+            'uae', 'united arab emirates', 'dubai', 'abu dhabi', 'sharjah', 'ajman', 'ras al khaimah',
+            // Kuwait 🇰🇼
+            'kuwait',
+            // Qatar 🇶🇦
+            'qatar', 'doha',
+            // Bahrain 🇧🇭
+            'bahrain', 'manama',
+            // Oman 🇴🇲
+            'oman', 'muscat',
+            // Regional MENA / Gulf
+            'middle east', 'mena', 'gulf', 'gcc',
+        ];
+
+        foreach ($gccKeywords as $kw) {
+            if (Str::contains($haystack, $kw)) {
+                return true;
+            }
+        }
+
+        // Worldwide / Global remote roles (open to applicants everywhere, including GCC)
+        $locClean = Str::lower(trim($location));
+        $worldwideKeywords = [
+            'worldwide', 'remote (worldwide)', 'global', 'anywhere', 'international',
+            'remote - worldwide', 'remote - global', 'remote — worldwide', 'remote — global',
+        ];
+        foreach ($worldwideKeywords as $kw) {
+            if ($locClean === $kw || Str::startsWith($locClean, 'remote (worldwide')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
