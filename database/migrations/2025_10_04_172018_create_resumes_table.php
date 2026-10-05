@@ -25,6 +25,7 @@ return new class extends Migration
 
             $table->uuid('userId');
             $table->foreign('userId')->references('id')->on('users')->onDelete('restrict');
+            $table->longText('vector_embedding')->nullable();
         });
     }
 

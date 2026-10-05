@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('address');
-            $table->string('indestry');
+            $table->string('industry')->nullable();
             $table->string('website')->nullable();
             $table->timestamps();
             $table->softDeletes();

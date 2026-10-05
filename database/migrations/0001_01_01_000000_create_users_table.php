@@ -20,9 +20,11 @@ return new class extends Migration
             $table->string('password');
             //Admin, Company Owner, Job Seeker
             $table->enum('role', ['admin', 'company_owner', 'job_seeker'])->default('job_seeker');
+            $table->boolean('is_active')->default(false);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+            $table->timestamp('last_login_at')->nullable();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
