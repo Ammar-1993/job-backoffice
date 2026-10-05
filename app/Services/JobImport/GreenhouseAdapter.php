@@ -31,7 +31,14 @@ class GreenhouseAdapter implements JobSourceAdapter
                     continue;
                 }
 
+                $boardCount = 0;
+                $maxPerBoard = 5;
+
                 foreach ($response->json('jobs', []) as $job) {
+                    if ($boardCount >= $maxPerBoard) {
+                        break;
+                    }
+
                     $title = $job['title'] ?? null;
                     if (! $title) {
                         continue; // skip malformed entries
@@ -50,7 +57,7 @@ class GreenhouseAdapter implements JobSourceAdapter
 
                     if ($jobId) {
                         try {
-                            $detailResp = Http::timeout(6)->get("https://boards-api.greenhouse.io/v1/boards/{$boardToken}/jobs/{$jobId}");
+                            $detailResp = Http::timeout(4)->get("https://boards-api.greenhouse.io/v1/boards/{$boardToken}/jobs/{$jobId}");
                             if ($detailResp->successful() && isset($detailResp->json()['content'])) {
                                 $description = $this->htmlToPlainText($detailResp->json()['content']);
                             }
@@ -58,6 +65,8 @@ class GreenhouseAdapter implements JobSourceAdapter
                             Log::warning("GreenhouseAdapter: could not fetch detail for job {$jobId} — {$e->getMessage()}");
                         }
                     }
+
+                    $boardCount++;
 
                     $results[] = [
                         'title'           => $title,
