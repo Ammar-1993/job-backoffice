@@ -153,13 +153,50 @@ class GreenhouseAdapter implements JobSourceAdapter
      */
     public function isGccEligible(string $location, string $title = ''): bool
     {
-        $locCheck = \App\Support\JobFilter::isLocationEligible($location, '');
-        if ($locCheck['eligible']) {
-            return true;
+        $haystack = strtolower($location . ' ' . $title);
+
+        // 1. If explicitly pinned to non-GCC regions (US, UK, Europe, Canada, etc.), reject immediately
+        $regionalExclusions = [
+            'united states', '\busa\b', 'canada', 'united kingdom', '\buk\b', 'london',
+            'germany', 'france', 'spain', 'netherlands', 'australia', 'india', 'bangalore',
+            'ireland', 'dublin', 'poland', 'japan', 'tokyo', 'singapore', 'brazil', 'mexico',
+            'europe', '\bapac\b', '\blatam\b', '\bemea\b'
+        ];
+
+        foreach ($regionalExclusions as $ex) {
+            if (preg_match('/' . $ex . '/i', $haystack)) {
+                // If it ALSO mentions GCC, GCC takes precedence (e.g. "Dubai or London")
+                if (! preg_match('/(saudi|riyadh|jeddah|dubai|abu dhabi|uae|kuwait|qatar|bahrain|oman)/i', $haystack)) {
+                    return false;
+                }
+            }
         }
 
-        // Also check if title explicitly mentions GCC locations (e.g. "Software Engineer - Riyadh")
-        $titleCheck = \App\Support\JobFilter::isLocationEligible($title, '');
-        return $titleCheck['eligible'];
+        // 2. Must match GCC in location or title
+        $gccPatterns = [
+            'saudi', 'saudi arabia', 'riyadh', 'jeddah', 'khobar', 'dammam', '\bksa\b',
+            'emirates', 'united arab emirates', 'dubai', 'abu dhabi', 'sharjah', '\buae\b',
+            'kuwait', 'qatar', 'doha', 'bahrain', 'manama', '\boman\b', 'muscat',
+            '\bgcc\b', 'middle east', '\bmena\b',
+        ];
+
+        foreach ($gccPatterns as $pattern) {
+            if (preg_match('/' . $pattern . '/i', $haystack)) {
+                return true;
+            }
+        }
+
+        // 3. Or pure Worldwide / Global remote strictly in the location field
+        $worldwidePatterns = [
+            'worldwide', 'anywhere', '\bglobal\b', 'remote - worldwide', 'remote (worldwide)'
+        ];
+
+        foreach ($worldwidePatterns as $pattern) {
+            if (preg_match('/' . $pattern . '/i', $location)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
