@@ -1,18 +1,19 @@
-# Job Vacancies Platform (Job Backoffice) Backend
+# Job Vacancies Platform — Job Backoffice & Automation Engine
 
 <div align="center">
 
 ![Job Application Platform Dashboard](./docs/assets/02_dashboard.png)
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Alpine.js](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white)](https://alpinejs.dev)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![FrankenPHP](https://img.shields.io/badge/FrankenPHP-Caddy_Engine-00ADD8?style=for-the-badge&logo=caddy&logoColor=white)](https://frankenphp.dev)
 
 </div>
 
-
-- [Live Demo](https://admin.hireme-platform.online/login)
+- **Live Production URL**: [admin.hireme-platform.online](https://admin.hireme-platform.online/login)
 
 ---
 
@@ -20,227 +21,203 @@
 
 - [Introduction](#-introduction)
 - [Key Features](#-key-features)
+- [Automated Job Ingestion Pipeline](#-automated-job-ingestion-pipeline)
+- [Smart Purge Engine](#-smart-purge-engine)
+- [Job Hunter Pipeline & Follow-up Tracking](#-job-hunter-pipeline--follow-up-tracking)
+- [Scheduler & Background Automation](#-scheduler--background-automation)
+- [Artisan CLI Commands](#-artisan-cli-commands)
 - [Project Interfaces](#-project-interfaces)
-- [Project Structure](#-project-structure)
-- [System Requirements](#-system-requirements)
-- [Installation & Setup](#-installation--setup)
+- [Architecture & Directory Structure](#-architecture--directory-structure)
+- [Installation & Local Setup](#-installation--local-setup)
+- [Automated CI/CD Deployment](#-automated-cicd-deployment)
 - [Technologies Used](#-technologies-used)
-- [Contribution](#-contribution)
-- [Common Issues](#-common-issues)
-- [Support](#-support)
+- [Security & Contribution](#-security--contribution)
 
 ---
 
 ## 🚀 Introduction
 
-The **Job Application BackOffice Platform** is a powerful administrative dashboard designed to streamline the management of job vacancies, user applications, and company profiles. It serves as the centralized control center for the job recruitment ecosystem.
-
-The system is built to provide:
-- **Efficiency**: Quick access to critical data and management tools.
-- **Control**: Robust role-based access control (RBAC) for Admins and Company Owners.
-- **Insight**: Real-time overview of platform activity.
+**Job Backoffice** is the administrative command center and automated data ingestion powerhouse of the **Job Vacancies Platform**. It provides administrators and company owners with full management of vacancies, applications, and companies, while operating an **Autonomous Ingestion Pipeline** that aggregates, sanitizes, embeds, and schedules external vacancies from premier global and Gulf tech companies.
 
 ---
 
 ## ✨ Key Features
 
-This platform offers a comprehensive suite of tools tailored for different user roles:
+### 👑 1. Master System Administration
+- **Complete Ecosystem Control**: Supervise all users, companies, listings, and applications.
+- **Role-Based Access Control (RBAC)**: Distinct permissions for Super Admins and Company Owners.
+- **Company Verification**: Review and approve newly registered employers and organizations.
+- **Soft Deletes & Recovery**: Protection against accidental data loss with full restore capabilities.
 
-### 👑 Admin (Super)
-- **Full System Control**: Manage all users, companies, and content.
-- **Master Data Management**: CRUD operations for Job Categories and global settings.
-- **User Management**: View, edit, ban, or restore system users.
-- **Company Verification**: Review and approve new company registrations.
+### 🤖 2. Automated Job Ingestion Pipeline
+- **Multi-Source Job Harvesting**: Pluggable adapter architecture extracting vacancies via APIs and RSS.
+- **Greenhouse Board Ingestion**: Direct integration with Greenhouse job boards of 20+ top tech companies (GitLab, Notion, Figma, Canonical, Tamara, Jahez, Floward, STC, Careem, etc.).
+- **WeWorkRemotely RSS Ingestion**: Aggregates top-tier international remote opportunities.
+- **HTML Sanitization (`htmlToPlainText`)**: Intelligent sanitization removing messy HTML tags and escaped entities while preserving bullet points and paragraph breaks.
+- **Automated Vector Embedding**: Integrates with OpenAI (`text-embedding-3-small`) to generate 1536-dimensional embeddings for all new and updated vacancies.
+- **Idempotency & De-duplication**: Prevents duplicate records using unique `source_url` indexes.
 
-### 🏢 Company Owner
-- **Job Management**: meaningful creation, editing, and management of job listings.
-- **Application Tracking**: View and process incoming job applications.
-- **Company Profile**: Update company details, logo, and public information.
-- **Dashboard**: View statistics relevant to their own job postings.
+### 🎯 3. Job Hunter Pipeline & Follow-up Tracker
+- **Dual Application Tracking**: Segregates public candidate submissions from personal job hunter applications.
+- **Hunter Lifecycle Stages**: Track personal applications across `Draft`, `Applied`, `Interviewing`, `Offered`, `Rejected`, and `Withdrawn`.
+- **Channel & Contact Logging**: Record applied channels (LinkedIn, Company Website, Referral) and contact personnel.
+- **Interview Logs & Follow-up Dates**: Chronological notes trail for tracking screening calls, technical rounds, and next follow-up dates.
 
-### 🛠 General Features
-- **Soft Deletes & Restore**: Safety net for accidental data removal.
-- **Responsive Design**: Fully optimized for desktop and tablet usage.
-- **Secure Authentication**: Robust login and session management.
-
----
-
-### 1. Secure Access
-**Admin Login**  
-A secure and clean entry point for administrators and company owners.  
-![Login](./docs/assets/01_login.png)
-
-### 2. Command Center
-**Main Dashboard**  
-The central hub providing a real-time overview of the platform's health. It features statistics on total jobs, applications, and active users, along with quick access to recent activities.  
-![Dashboard](./docs/assets/02_dashboard.png)
-
-### 3. Recruitment Management
-**Job Vacancies & Applications**  
-Powerful tools to manage the core recruitment process. Admins can track all posted jobs and review incoming applications efficiently.  
-<div align="center">
-  <img src="./docs/assets/03_job_vacancies_list.png" width="48%" alt="Job Vacancies">
-  <img src="./docs/assets/04_job_applications_list.png" width="48%" alt="Job Applications">
-</div>
-
-### 4. Categorization & Structure
-**Job Categories**  
-Manage the various job sectors available on the platform, ensuring organized and searchable content for candidates.  
-![Job Categories](./docs/assets/05_job_categories.png)
-
-### 5. Stakeholder Management
-**Companies & Users**  
-Comprehensive lists to manage the platform's key stakeholders. Admins can verify companies, manage user roles, and ensure the integrity of the ecosystem.  
-<div align="center">
-  <img src="./docs/assets/06_companies_list.png" width="48%" alt="Companies List">
-  <img src="./docs/assets/07_users_list.png" width="48%" alt="Users List">
-</div>
+### 🧹 4. Smart Purge Engine
+- **Unmatched Role Cleanup**: Removes non-technical positions (Sales, Marketing, HR, Finance) and fundamental stack mismatches (e.g. C++ embedded/firmware roles) using `JobFilter` and `SkillMatcher`.
 
 ---
 
-## 📂 Project Structure
+## ⏰ Scheduler & Background Automation
 
-The project follows a standard scalable **Laravel** architecture:
+The platform features an autonomous scheduling service running daily background routines without blocking user requests:
+
+```
+[02:00 Daily] ──► jobs:import-external --source=greenhouse --limit=50 (without overlapping)
+[02:30 Daily] ──► jobs:import-external --source=weworkremotely --limit=20 (without overlapping)
+```
+
+Configured in `routes/console.php` with automated output logging to `storage/logs/scheduler-*.log`.
+
+---
+
+## 💻 Artisan CLI Commands
+
+Run and test backoffice operations from the terminal:
+
+```bash
+# 1. Import external vacancies from all configured sources
+php artisan jobs:import-external
+
+# 2. Import from a specific source with a safety limit
+php artisan jobs:import-external --source=greenhouse --limit=15
+php artisan jobs:import-external --source=weworkremotely --limit=10
+
+# 3. Purge non-technical and stack-incompatible vacancies
+php artisan jobs:purge-unmatched
+
+# 4. View scheduled background jobs
+php artisan schedule:list
+
+# 5. Run database migrations safely
+php artisan migrate --force
+```
+
+---
+
+## 🖼 Project Interfaces
+
+| Interface | Purpose |
+| :--- | :--- |
+| **Admin Login** | Secure entry point with credential protection |
+| **Command Dashboard** | Real-time analytics, user statistics, and recent activity logs |
+| **Job Vacancies Directory** | Manage, filter, and inspect internal and imported vacancies |
+| **Job Applications Manager** | Track incoming applicant submissions and hunter applications |
+| **Hunter Pipeline View** | Dedicated stage-based tracking, interview logs, and follow-up alerts |
+| **Company Verification** | Review and verify employer registrations and profiles |
+
+---
+
+## 📂 Architecture & Directory Structure
 
 ```
 job-backoffice/
 ├── app/
-│   ├── Http/Controllers/    # Request handling logic (Dashboard, Jobs, Users)
-│   ├── Models/              # Eloquent models (Job, Application, Company)
-│   └── Providers/           # Service providers for dependency injection
-├── resources/
-│   ├── css/                 # Tailwind CSS entry points
-│   ├── js/                  # Alpine.js logic and scripts
-│   └── views/               # Blade templates for the UI
-├── routes/
-│   ├── web.php              # Web routes definition
-│   └── auth.php             # Authentication routes
+│   ├── Console/Commands/
+│   │   ├── ImportExternalJobs.php   # jobs:import-external command
+│   │   └── PurgeUnmatchedJobs.php   # jobs:purge-unmatched cleanup command
+│   ├── Http/Controllers/
+│   │   ├── DashboardController.php  # Analytics and statistics
+│   │   ├── JobApplicationController.php # Applications and Hunter pipeline management
+│   │   └── JobVacancyController.php # Job listings management
+│   ├── Models/                      # Eloquent models (extended from job-shared)
+│   └── Services/
+│       └── JobImport/
+│           ├── JobSourceAdapter.php       # Adapter contract interface
+│           ├── GreenhouseAdapter.php      # Greenhouse API adapter & HTML cleaner
+│           ├── WeWorkRemotelyAdapter.php  # RSS feed adapter
+│           └── JobImportService.php       # Ingestion orchestrator & deduplication engine
+├── config/
+│   ├── job_sources.php              # Greenhouse boards and RSS configurations
+│   └── openai.php                   # OpenAI API connection settings
 ├── database/
-│   ├── migrations/          # Database schema definitions
-│   └── seeders/             # Dummy data generators for testing
-└── public/                  # Publicly accessible assets
+│   ├── migrations/                  # Database schema definitions & Hunter mode migrations
+│   └── seeders/                     # Initial database seeding
+├── resources/views/                 # Blade administrative templates
+├── routes/
+│   ├── web.php                      # Administrative web routes
+│   └── console.php                  # Scheduled import jobs definitions
+├── .github/workflows/
+│   └── deploy.yml                   # Smart zero-downtime deployment workflow
+└── Dockerfile                       # Multi-stage production container with FrankenPHP
 ```
 
 ---
 
-## 💻 System Requirements
-
-Before setting up the project, ensure your environment meets the following prerequisites:
-
-- **PHP**: >= 8.2
-- **Composer**: Latest version
-- **Node.js**: >= 18.x & **NPM**
-- **Database**: MySQL 8.0+ or MariaDB 10+
-- **Web Server**: Caddy (used in production) or Nginx/Apache (local dev)
-
----
-
-## ⚙️ Installation & Setup
-
-Follow these steps to get the project running locally.
+## ⚙️ Installation & Local Setup
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Ammar-1993/job-vacancies-platform.git
-cd job-vacancies-platform/job-backoffice
+git clone https://github.com/Ammar-1993/job-backoffice.git
+cd job-backoffice
 ```
 
 ### 2. Install Dependencies
-Install PHP and Node.js dependencies:
 ```bash
 composer install
 npm install
 ```
 
-### 3. Environment Configuration
-Copy the example environment file and configure your database settings:
+### 3. Configure Environment
 ```bash
 cp .env.example .env
 nano .env
 ```
-*Update `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` as needed.*
+Ensure your database and OpenAI settings are configured:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=jobs_db
+DB_USERNAME=root
+DB_PASSWORD=your_password
 
-### 4. Generate Application Key
+OPENAI_API_KEY=sk-proj-...
+JOB_IMPORTER_SYSTEM_EMAIL=importer@hireme-platform.online
+```
+
+### 4. Database Setup & Assets Build
 ```bash
 php artisan key:generate
-```
-
-### 5. Database Setup
-Run migrations and seed the database with initial testing data:
-```bash
 php artisan migrate --seed
-```
-
----
-
-### 6. Build Assets
-Compile the frontend assets:
-```bash
 npm run build
 ```
 
-### 7. Run the Application
-Start the local development server:
+### 5. Launch the Server
 ```bash
 php artisan serve
 ```
-Visit `http://localhost:8000` in your browser.
+Visit `http://localhost:8000` (or `http://localhost:8081` if running via Docker).
 
 ---
 
-## 🛠 Technologies Used
+## 🚀 Automated CI/CD Deployment
 
-We chose this stack for its **reliability**, **performance**, and **developer experience**.
+The repository uses a smart GitHub Actions workflow ([`deploy.yml`](.github/workflows/deploy.yml)):
 
-| Technology | Purpose |
-|------------|---------|
-| **Laravel 12** | Robust PHP framework for backend logic and routing. |
-| **Tailwind CSS** | Utility-first CSS framework for rapid, custom UI design. |
-| **Alpine.js** | Lightweight JavaScript framework for interactive frontend components. |
-| **MySQL / MariaDB** | Reliable relational database management. |
-| **Job Shared** | Custom library used to centralize Models and Enums across the platform. |
-| **Vite** | Next-generation frontend tooling for fast builds. |
+- **Pre-syncs `job-shared`** on every deployment.
+- **Change Impact Detection (`git diff`)**: Code changes deploy instantly via in-place hot sync (< 3 seconds) without rebuilding Docker containers.
+- **Database Migrations**: Automatically runs `php artisan migrate --force`.
+- **Cache Optimization**: Runs `optimize:clear` and `optimize` to refresh framework bootstrapper.
 
 ---
 
-## 🤝 Contribution
+## 🔐 Default Credentials (Development / Demo)
 
-We welcome contributions! Please follow these steps to contribute:
-
-1. **Fork** the repository.
-2. **Create a Branch** for your feature (`git checkout -b feature/AmazingFeature`).
-3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`).
-4. **Push** to the branch (`git push origin feature/AmazingFeature`).
-5. **Open a Pull Request**.
-
-Please ensure your code follows the project's coding standards and includes appropriate tests.
+- **Role**: Super Admin
+- **Email**: `admin@admin.com`
+- **Password**: `12345678`
 
 ---
 
-## ❓ Common Issues
-
-### 1. Permission Denied (Storage)
-If you encounter permission errors:
-```bash
-chmod -R 775 storage bootstrap/cache
-```
-
-### 2. Database Connection Refused
-- Ensure your MySQL server is running.
-- Verify credentials in `.env`.
-- If using Docker/Sail, check container status.
-
-### 3. Vite Manifest Not Found
-Run `npm run build` to generate the manifest file.
-
----
-
-## 💡 Feedback & Tips
-
-- **Security**: Always set `APP_DEBUG=false` in production.
-- **Performance**: Use `php artisan route:cache` and `config:cache` in production environments.
-- **Data**: Use `php artisan db:seed` to quickly populate your local database with dummy data for testing.
-
----
-
-<p align="center">Developed by ❤️ Engineer Ammar Al-Najjar</p>
+<p align="center">Developed with ❤️ by Eng. Ammar Al-Najjar</p>
