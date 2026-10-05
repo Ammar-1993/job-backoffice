@@ -43,6 +43,7 @@ class PurgeUnmatchedJobs extends Command
             }
 
             $candidateSkills = $resume->skills ?? [];
+            $candidateExp    = $resume->experience ?? null;
             $resumeEmbedding = $resume->vector_embedding ? json_decode($resume->vector_embedding, true) : null;
 
             $this->info("المرشح: {$user->name} ({$user->email})");
@@ -94,7 +95,8 @@ class PurgeUnmatchedJobs extends Command
                 $jobEmbedding,
                 $candidateSkills,
                 $job->title ?? '',
-                $job->description ?? ''
+                $job->description ?? '',
+                $candidateExp ?? null
             );
 
             $score = $hybrid['composite_score'];
