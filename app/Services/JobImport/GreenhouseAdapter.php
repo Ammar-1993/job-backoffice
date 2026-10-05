@@ -21,9 +21,9 @@ class GreenhouseAdapter implements JobSourceAdapter
 
         foreach (config('job_sources.greenhouse_boards', []) as $boardToken => $companyName) {
             try {
-                $response = Http::timeout(15)->get(
-                    "https://boards-api.greenhouse.io/v1/boards/{$boardToken}/jobs",
-                    ['content' => 'true']
+                // 1. Fetch lightweight job listing without downloading heavy content for hundreds of irrelevant jobs
+                $response = Http::timeout(10)->get(
+                    "https://boards-api.greenhouse.io/v1/boards/{$boardToken}/jobs"
                 );
 
                 if (! $response->successful()) {
@@ -37,15 +37,26 @@ class GreenhouseAdapter implements JobSourceAdapter
                         continue; // skip malformed entries
                     }
 
-                    $description = isset($job['content'])
-                        ? $this->htmlToPlainText($job['content'])
-                        : $title;
-
                     $location = $job['location']['name'] ?? 'Not specified';
 
-                    // ── GCC & Gulf Targeting: only keep GCC-based jobs or Worldwide remote ──
-                    if (! $this->isGccEligible($location, $title)) {
+                    // 2. Pre-filter by location & technical role BEFORE downloading full description
+                    if (! $this->isGccEligible($location, $title) || ! \App\Support\JobFilter::isTechnicalRole($title)) {
                         continue;
+                    }
+
+                    // 3. For eligible technical roles, fetch single job description on-demand
+                    $jobId = $job['id'] ?? null;
+                    $description = $title;
+
+                    if ($jobId) {
+                        try {
+                            $detailResp = Http::timeout(6)->get("https://boards-api.greenhouse.io/v1/boards/{$boardToken}/jobs/{$jobId}");
+                            if ($detailResp->successful() && isset($detailResp->json()['content'])) {
+                                $description = $this->htmlToPlainText($detailResp->json()['content']);
+                            }
+                        } catch (\Throwable $e) {
+                            Log::warning("GreenhouseAdapter: could not fetch detail for job {$jobId} — {$e->getMessage()}");
+                        }
                     }
 
                     $results[] = [
@@ -53,7 +64,7 @@ class GreenhouseAdapter implements JobSourceAdapter
                         'description'     => $description !== '' ? $description : $title,
                         'location'        => $location,
                         'type'            => $this->detectType($title, $location),
-                        'salary'          => 'Not specified', // Greenhouse's public board API doesn't expose pay data on most boards
+                        'salary'          => 'Not specified',
                         'company_name'    => $companyName ?: $boardToken,
                         'source_platform' => 'greenhouse',
                         'source_url'      => $job['absolute_url'] ?? null,
@@ -133,43 +144,13 @@ class GreenhouseAdapter implements JobSourceAdapter
      */
     public function isGccEligible(string $location, string $title = ''): bool
     {
-        $haystack = Str::lower($location . ' ' . $title);
-
-        $gccKeywords = [
-            // Saudi Arabia 🇸🇦
-            'saudi', 'ksa', 'riyadh', 'jeddah', 'dammam', 'khobar', 'dhahran', 'jubail', 'makkah', 'mecca', 'medina', 'tabuk',
-            // United Arab Emirates 🇦🇪
-            'uae', 'united arab emirates', 'dubai', 'abu dhabi', 'sharjah', 'ajman', 'ras al khaimah',
-            // Kuwait 🇰🇼
-            'kuwait',
-            // Qatar 🇶🇦
-            'qatar', 'doha',
-            // Bahrain 🇧🇭
-            'bahrain', 'manama',
-            // Oman 🇴🇲
-            'oman', 'muscat',
-            // Regional MENA / Gulf
-            'middle east', 'mena', 'gulf', 'gcc',
-        ];
-
-        foreach ($gccKeywords as $kw) {
-            if (Str::contains($haystack, $kw)) {
-                return true;
-            }
+        $locCheck = \App\Support\JobFilter::isLocationEligible($location, '');
+        if ($locCheck['eligible']) {
+            return true;
         }
 
-        // Worldwide / Global remote roles (open to applicants everywhere, including GCC)
-        $locClean = Str::lower(trim($location));
-        $worldwideKeywords = [
-            'worldwide', 'remote (worldwide)', 'global', 'anywhere', 'international',
-            'remote - worldwide', 'remote - global', 'remote — worldwide', 'remote — global',
-        ];
-        foreach ($worldwideKeywords as $kw) {
-            if ($locClean === $kw || Str::startsWith($locClean, 'remote (worldwide')) {
-                return true;
-            }
-        }
-
-        return false;
+        // Also check if title explicitly mentions GCC locations (e.g. "Software Engineer - Riyadh")
+        $titleCheck = \App\Support\JobFilter::isLocationEligible($title, '');
+        return $titleCheck['eligible'];
     }
 }
